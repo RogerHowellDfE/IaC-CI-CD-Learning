@@ -8,20 +8,26 @@ $githubRepositoryName = 'IaC-CI-CD-Learning'
 
 ###
 $branchName = 'tutorial-01'
-$tutorialSuffix = "-${$branchName}"
+$tutorialSuffix = "-$($branchName)"
 
 ### AD Application
-$adApplicationDisplayName = "bicep-ci-cd-learning-github-workflow${$tutorialSuffix}"
-$adApplicationName = "bicep-ci-cd-learning-github-workflow${$tutorialSuffix}"
+$adApplicationDisplayName = "bicep-ci-cd-learning-github-workflow$($tutorialSuffix)"
+$adApplicationName = "bicep-ci-cd-learning-github-workflow$($tutorialSuffix)"
 
 ### Resource Group
-$resourceGroupName = "Xyz${$tutorialSuffix}"
+$resourceGroupName = "Xyz$($tutorialSuffix)"
 $resourceGroupLocation = 'uksouth'
 
 
-Write-Host $branchName
-Write-Host $tutorialSuffix
-Write-Host $resourceGroupName
+Write-Host "githubOrganisationName      : $($githubOrganisationName)"
+Write-Host "githubRepositoryName        : $($githubRepositoryName)"
+Write-Host "branchName                  : $($branchName)"
+Write-Host "tutorialSuffix              : $($tutorialSuffix)"
+Write-Host "adApplicationDisplayName    : $($adApplicationDisplayName)"
+Write-Host "adApplicationName           : $($adApplicationName)"
+Write-Host "resourceGroupName           : $($resourceGroupName)"
+Write-Host "resourceGroupLocation       : $($resourceGroupLocation)"
+
 
 ## Login to Azure Portal account 
 ## - Note that this is interactive, and will launch a browser window to do login
@@ -36,6 +42,7 @@ Get-AzResourceGroup -Name $($resourceGroupName)
 
 
 ## Create new Azure Active Directory (AD) Application, only if it doesn't already exist
+## Not explicitly required, but if check not performed then potential for `$application` to contain multiple values
 $applicationRegistration
 if(((Get-AzADApplication -DisplayName $adApplicationDisplayName) | measure).Count -gt 0) {
     Write-Error 'Not creating new AD Application Registration - one already exists with this name'
@@ -66,7 +73,7 @@ Write-Host "AZURE_CLIENT_ID:       $((Get-AzADApplication -DisplayName $adApplic
 ## Create Azure AD Application Federated Credentials for the (newly-created) AD Application Registration to be accessed by GitHub
 ## See tutorial 02 for addiitonal detail about this (short version: we're telling Azure which GitHub credentials are permitted)
 ## 
-## - Below is specifically for the `${$branchName}` branch of this specific repo (also possible to apply to environments, pull requests, tags)
+## - Below is specifically for the `$(branchName)` branch of this specific repo (also possible to apply to environments, pull requests, tags)
 ##
 New-AzADAppFederatedCredential `
    -Name "$($adApplicationName)-github-branch-$($branchName)"`
@@ -79,8 +86,11 @@ New-AzADAppFederatedCredential `
 ## https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Credentials/appId/<REDACTED-APP-ID>/isMSAApp~/false
 
 
-## Assign workflow identity permissions to the (newly-created) resource group
+## Create Service Principal to the application
 New-AzADServicePrincipal -AppId $application.AppId
+
+
+## Assign workflow identity permissions to the (newly-created) resource group
 New-AzRoleAssignment `
    -ApplicationId $($application.AppId) `
    -RoleDefinitionName Contributor `
