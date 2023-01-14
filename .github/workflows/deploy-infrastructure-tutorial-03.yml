@@ -139,9 +139,8 @@ jobs:
     - run: echo ${{ steps.deploy.outputs.containerName }}
     - run: echo ${{ steps.deploy.outputs.appServiceAppHostName }}
     - run: echo ${{ steps.deploy.outputs }}
-    - run: echo ${{ steps.deploy.outputs }}  | ConvertFrom-Json | ConvertTo-Json 
-    - run: echo ${{ steps.deploy.outputs }}  | ConvertTo-Json   | ConvertFrom-Json
     - run: echo ${{ toJSON(steps.deploy.outputs) }}
+    - run: echo ${{ join(steps.run_tests.outputs.*, '\n') }}
 
 
 
