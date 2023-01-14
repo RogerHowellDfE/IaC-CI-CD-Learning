@@ -123,24 +123,35 @@ jobs:
 
     - shell: pwsh
       run: Write-Host ${{ steps.deploy.outputs.containerName }}
+      continue-on-error: true
     - shell: pwsh
       run: Write-Host ${{ steps.deploy.outputs.appServiceAppHostName }}
+      continue-on-error: true
     - shell: pwsh
       run: Write-Host ${{ steps.deploy.outputs }}
+      continue-on-error: true
     - shell: pwsh
       run: Write-Host ${{ steps.deploy.outputs }}  | ConvertFrom-Json | ConvertTo-Json 
+      continue-on-error: true
     - shell: pwsh
       run: Write-Host ${{ steps.deploy.outputs }}  | ConvertTo-Json   | ConvertFrom-Json
+      continue-on-error: true
     - shell: pwsh
       run: Write-Host ${{ toJSON(steps.deploy.outputs) }}
+      continue-on-error: true
       
 
 
     - run: echo ${{ steps.deploy.outputs.containerName }}
+      continue-on-error: true
     - run: echo ${{ steps.deploy.outputs.appServiceAppHostName }}
+      continue-on-error: true
     - run: echo ${{ steps.deploy.outputs }}
+      continue-on-error: true
     - run: echo ${{ toJSON(steps.deploy.outputs) }}
+      continue-on-error: true
     - run: echo ${{ join(steps.run_tests.outputs.*, '\n') }}
+      continue-on-error: true
 
 
 
