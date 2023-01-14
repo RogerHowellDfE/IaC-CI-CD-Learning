@@ -11,7 +11,7 @@ $adApplicationDisplayName = 'bicep-ci-cd-learning-github-workflow'
 $adApplicationName = 'bicep-ci-cd-learning-github-workflow'
 
 ### Resource Group
-$resourceGroupName = 'Xyz'
+$resourceGroupName = 'Xyz-tutorial-01'
 $resourceGroupLocation = 'uksouth'
 
 
@@ -52,14 +52,15 @@ Write-Host "AZURE_CLIENT_ID:       $((Get-AzADApplication -DisplayName $adApplic
 ## Create Azure AD Application Federated Credentials for the (newly-created) AD Application Registration to be accessed by GitHub
 ## See tutorial 02 for addiitonal detail about this (short version: we're telling Azure which GitHub credentials are permitted)
 ## 
-## - Below is specifically for the main branch of this specific repo (also possible to apply to environments, pull requests, tags)
+## - Below is specifically for the `tutorial-01` branch of this specific repo (also possible to apply to environments, pull requests, tags)
 ##
+$branchName = 'tutorial-01'
 New-AzADAppFederatedCredential `
-   -Name "$($adApplicationName)" `
-   -ApplicationObjectId $applicationRegistration.Id `
+   -Name "$($adApplicationName)-github-branch-$($branchName)"`
+   -ApplicationObjectId $application.Id `
    -Issuer 'https://token.actions.githubusercontent.com' `
    -Audience 'api://AzureADTokenExchange' `
-   -Subject "repo:$($githubOrganisationName)/$($githubRepositoryName):ref:refs/heads/main"
+   -Subject "repo:$($githubOrganisationName)/$($githubRepositoryName):ref:refs/heads/$($branchName)"
 
 ## See (newly-created) federated permissions here:
 ## https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Credentials/appId/<REDACTED-APP-ID>/isMSAApp~/false

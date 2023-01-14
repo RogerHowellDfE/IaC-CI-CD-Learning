@@ -158,7 +158,7 @@ New-AzRoleAssignment `
 
 
 ## Which workflow targets are permitted to trigger this?
-$branchName = 'main'
+$branchName = 'tutorial-02'
 $policy = "repo:$($githubOrganisationName)/$($githubRepositoryName):ref:refs/heads/$($branchName)"
 
 New-AzADAppFederatedCredential `
