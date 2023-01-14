@@ -20,8 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-      with:
-        path: repo
+    
     - uses: azure/login@v1
       with:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
@@ -29,7 +28,12 @@ jobs:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     - name: display file listing
-      shell: Get-ChildItem -Recurse . | Select FullName
+      shell: pwsh
+      run: Get-ChildItem -Recurse . | Select FullName
+      
+    - name: show current working directory
+      shell: pwsh
+      run: pwd
 
     - uses: azure/arm-deploy@v1
       with:
