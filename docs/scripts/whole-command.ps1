@@ -67,4 +67,3 @@ New-AzRoleAssignment `
    -Scope $resourceGroup.ResourceId
 
 
-
