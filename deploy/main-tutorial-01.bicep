@@ -13,10 +13,11 @@ param environmentType string
 param resourceNameSuffix string = uniqueString(resourceGroup().id)
 
 var namePrefix = 'xyz-tutorial-01'
+var namePrefixAlphanumeric = 'xyzTutorial01'
 
 var appServiceAppName = '${namePrefix}-${resourceNameSuffix}'
 var appServicePlanName = '${namePrefix}-plan'
-var xyzStorageAccountName = '${namePrefix}${resourceNameSuffix}'
+var xyzStorageAccountName = '${namePrefixAlphanumeric}Storage${resourceNameSuffix}' // alphanumeric only
 
 // Define the SKUs for each component based on the environment type.
 var environmentConfigurationMap = {
