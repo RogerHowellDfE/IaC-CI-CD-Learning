@@ -72,23 +72,30 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    environment: Tutorial-03      ## Environment protection rules on this environment specification in GitHub will trigger requirement for manual approval
+    ## environment: Tutorial-03      ## Environment protection rules on this environment specification in GitHub will trigger requirement for manual approval
     needs: [preview]
-    steps: 
+    steps:
     - uses: actions/checkout@v3.3.0
+    
     - uses: azure/login@v1
-      name: Sign in to Azure
       with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID_TUTORIAL_03 }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        ## Discussion: Arguable if these ID values are "secrets"(???)
+        ## - Must be able to authenticate as the GitHub branch/PR/whatever (as specified within Azure federated ID config), to be able to use these details
+        ## - Do not need to routinely rotate/revoke them etc
+        ## - Potential social engineering attack / information leverage vector?
+        ## - Advantageous to configure as secrets as it makes the workflow file transportable
+        client-id: ${{ secrets.AZURE_CLIENT_ID_TUTORIAL_03 }}   ## Application ID for the application registration, _not_ the object ID
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}               ## Unique identifier for your Azure AD tenant (directory)
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}   ## The Azure subscription ID being interacted with / deployed to
+
     - uses: azure/arm-deploy@v1
-      name: Run what-if
       with:
         ## When using custom linter configuration, Bicep writes log data to stderr, which GHA interprets as an error
         ## Disabling, per https://learn.microsoft.com/en-gb/training/modules/test-bicep-code-using-github-actions/5-exercise-add-lint-validate-jobs-workflow
         failOnStdErr: false
-        deploymentName: ${{ env.DEPLOYMENT_NAME }}
+        deploymentName: "GitHub-Workflow-Run-${{ github.run_number }}" ## Alphanumeric plus .-_ (i.e., `[a-zA-Z0-9.-_]+`)
         resourceGroupName: ${{ env.AZURE_RESOURCEGROUP_NAME }}
         template: ${{ env.PATH_TO_BICEP_FILE }}
         parameters: environmentType=${{ env.ENVIRONMENT_TYPE }}
+
+
