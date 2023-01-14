@@ -67,3 +67,7 @@ New-AzRoleAssignment `
    -Scope $resourceGroup.ResourceId
 
 
+## Drop the resource group
+```
+Remove-AzResourceGroup -Name $($resourceGroupName) -Force
+```
