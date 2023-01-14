@@ -13,12 +13,12 @@ param environmentType string
 param resourceNameSuffix string = uniqueString(resourceGroup().id)
 
 var namePrefix = 'xyz-tutorial-01'
-var namePrefixAlphanumeric = 'xyzTut01' // max 11 chars long (max 24chars when combined with 13char resource name suffix)
+var namePrefixAlphanumeric = 'xyztut01' // all lowercase alphanumeric, max 11 chars long (max 24chars when combined with 13char resource name suffix)
 
 var appServiceAppName = '${namePrefix}-${resourceNameSuffix}'
 var appServicePlanName = '${namePrefix}-plan'
-var xyzStorageAccountName = '${namePrefixAlphanumeric}${resourceNameSuffix}' // alphanumeric only, and 3-24 characters long
-
+var xyzStorageAccountName = '${namePrefixAlphanumeric}${resourceNameSuffix}' // lowercase alphanumeric only, and 3-24 characters long
+ 
 // Define the SKUs for each component based on the environment type.
 var environmentConfigurationMap = {
   nonprod: {
