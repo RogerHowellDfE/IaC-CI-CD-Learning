@@ -23,13 +23,13 @@ jobs:
     
     - uses: azure/login@v1
       with:
-        client-id: "GitHub Workflow Run #${{ secrets.AZURE_CLIENT_ID }}"
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     - uses: azure/arm-deploy@v1
       with:
-        deploymentName: ${{ github.run_number }}
+        deploymentName: "GitHub Workflow Run #${{ github.run_number }}"
         resourceGroupName: ${{ env.AZURE_RESOURCEGROUP_NAME }}
         template: ./deploy/main.bicep
         parameters: environmentType=${{ env.ENVIRONMENT }}
