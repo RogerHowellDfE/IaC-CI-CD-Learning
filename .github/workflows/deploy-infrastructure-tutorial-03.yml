@@ -76,6 +76,25 @@ jobs:
     needs: [preview]
     steps:
     - uses: actions/checkout@v3.3.0
+    
+    - name: Check secrets are set
+      shell: bash
+      run: |
+        if [ "${{ secrets.AZURE_CLIENT_ID_TUTORIAL_03 }}" != '' ]; then
+          echo "AZURE_CLIENT_ID_TUTORIAL_03 is set";
+        else
+          echo >&2 "AZURE_CLIENT_ID_TUTORIAL_03 unavailable";
+        fi
+        if [ "${{ secrets.AZURE_TENANT_ID }} != '' ]; then
+          echo "AZURE_TENANT_ID is set";
+        else
+          echo >&2 "AZURE_TENANT_ID unavailable";
+        fi
+        if [ "${{ secrets.AZURE_SUBSCRIPTION_ID }} != '' ]; then
+          echo "AZURE_SUBSCRIPTION_ID is set";
+        else
+          echo >&2 "AZURE_SUBSCRIPTION_ID unavailable";
+        fi
 
     - uses: azure/login@v1
       with:
