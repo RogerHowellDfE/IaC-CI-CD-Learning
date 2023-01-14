@@ -30,12 +30,14 @@ jobs:
     - name: display file listing
       shell: pwsh
       run: Get-ChildItem -Recurse . | Select FullName
-
-
+      
+    - name: show current working directory
+      shell: pwsh
+      run: pwd
 
     - uses: azure/arm-deploy@v1
       with:
         deploymentName: ${{ github.run_number }}
         resourceGroupName: ${{ env.AZURE_RESOURCEGROUP_NAME }}
-        template: ./deploy/main.bicep
+        template: ${{github.}} ./deploy/main.bicep
         parameters: environmentType=${{ env.ENVIRONMENT }}
