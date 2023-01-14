@@ -75,7 +75,7 @@ jobs:
     needs: [preview]
     steps:
     - uses: actions/checkout@v3.3.0
-
+    
     - uses: azure/login@v1
       with:
         ## When using custom linter configuration, Bicep writes log data to stderr, which GHA interprets as an error
@@ -92,8 +92,9 @@ jobs:
 
     - uses: azure/arm-deploy@v1
       with:
-        deploymentName: ${{ env.DEPLOYMENT_NAME }}
+        deploymentName: "GitHub-Workflow-Run-${{ github.run_number }}" ## Alphanumeric plus .-_ (i.e., `[a-zA-Z0-9.-_]+`)
         resourceGroupName: ${{ env.AZURE_RESOURCEGROUP_NAME }}
         template: ${{ env.PATH_TO_BICEP_FILE }}
         parameters: environmentType=${{ env.ENVIRONMENT_TYPE }}
+
 
