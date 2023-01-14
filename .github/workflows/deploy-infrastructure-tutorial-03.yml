@@ -72,7 +72,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    ## environment: Tutorial-03      ## Environment protection rules on this environment specification in GitHub will trigger requirement for manual approval
+    environment: Tutorial-03      ## Environment protection rules on this environment specification in GitHub will trigger requirement for manual approval
     needs: [preview]
     steps:
     - uses: actions/checkout@v3.3.0
