@@ -133,22 +133,15 @@ jobs:
       run: Write-Host ${{ steps.deploy.outputs }}  | ConvertTo-Json   | ConvertFrom-Json
     - shell: pwsh
       run: Write-Host ${{ toJSON(steps.deploy.outputs) }}
+      
 
 
-
-    - shell: cmd
-      run: echo ${{ steps.deploy.outputs.containerName }}
-    - shell: cmd
-      run: echo ${{ steps.deploy.outputs.appServiceAppHostName }}
-    - shell: cmd
-      run: echo ${{ steps.deploy.outputs }}
-    - shell: cmd
-      run: echo ${{ steps.deploy.outputs }}  | ConvertFrom-Json | ConvertTo-Json 
-    - shell: cmd
-      run: echo ${{ steps.deploy.outputs }}  | ConvertTo-Json   | ConvertFrom-Json
-    - shell: cmd
-      run: echo ${{ toJSON(steps.deploy.outputs) }}
-
+    - run: echo ${{ steps.deploy.outputs.containerName }}
+    - run: echo ${{ steps.deploy.outputs.appServiceAppHostName }}
+    - run: echo ${{ steps.deploy.outputs }}
+    - run: echo ${{ steps.deploy.outputs }}  | ConvertFrom-Json | ConvertTo-Json 
+    - run: echo ${{ steps.deploy.outputs }}  | ConvertTo-Json   | ConvertFrom-Json
+    - run: echo ${{ toJSON(steps.deploy.outputs) }}
 
 
 
