@@ -1,6 +1,12 @@
 name: MyWorkflow
 
-on: [workflow_dispatch]
+on: 
+  workflow_dispatch:
+  push:
+    branches:
+    - main
+    paths:
+    - '!docs/**'
 
 permissions:
   id-token: write
