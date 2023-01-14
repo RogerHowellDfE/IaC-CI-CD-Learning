@@ -128,6 +128,16 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Check app service hostname has been passed
+      shell: bash
+      run: |
+        if [ "${{ needs.deploy.outputs.appServiceAppHostName }}" != '' ]; then
+          echo "needs.deploy.outputs.appServiceAppHostName is set";
+        else
+          echo >&2 "needs.deploy.outputs.appServiceAppHostName unavailable";
+        fi
+        
+        
     ## PowerShell and Pester are both preinstalled on GitHub-hosted runners. You don't need to do anything special to use them in a script step.
     ## https://learn.microsoft.com/en-gb/training/modules/test-bicep-code-using-github-actions/9-exercise-add-test-job-workflow?pivots=powershell
     - run: |
