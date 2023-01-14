@@ -24,7 +24,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Run Bicep linter
-      run: az bicep build --file ${{ env.PATH_TO_BICEP_FILE }}
+      run: az bicep build --file ${{ env.PATH_TO_BICEP_FILE }} ## Performing `bulld` implicitly runs linter
 
   validate:
     runs-on: ubuntu-latest
@@ -57,6 +57,9 @@ jobs:
 
     - uses: azure/login@v1
       with:
+        ## When using custom linter configuration, Bicep writes log data to stderr, which GHA interprets as an error
+        ## Disabling, per https://learn.microsoft.com/en-gb/training/modules/test-bicep-code-using-github-actions/5-exercise-add-lint-validate-jobs-workflow
+        failOnStdErr: false
         ## Discussion: Arguable if these ID values are "secrets"(???)
         ## - Must be able to authenticate as the GitHub branch/PR/whatever (as specified within Azure federated ID config), to be able to use these details
         ## - Do not need to routinely rotate/revoke them etc
