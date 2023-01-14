@@ -133,13 +133,17 @@ New-AzRoleAssignment `
   - `AZURE_TENANT_ID`
   - Also referred to as Directory ID
   - `(Get-AzContext).Tenant.Id`
+  - Available on "switch directory" page
+  - Available on "app registration overview" page
 - Subscription ID
   - `AZURE_SUBSCRIPTION_ID`
-  - (Get-AzContext).Subscription.Id
+  - `(Get-AzContext).Subscription.Id`
+  - Available on "subscription overview page"
 - Client ID
   - `AZURE_CLIENT_ID`
   - Specific to the application / client connecting to Azure
   - Also referred to as the application (client) ID
+  - Available on "app registration overview" page
   - 
 
 

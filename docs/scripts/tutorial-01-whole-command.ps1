@@ -74,6 +74,5 @@ New-AzRoleAssignment `
 
 
 ## Drop the resource group
-```
 Remove-AzResourceGroup -Name $($resourceGroupName) -Force
-```
+
