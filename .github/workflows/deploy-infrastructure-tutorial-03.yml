@@ -1,0 +1,41 @@
+name: Deploy Infrastructure
+concurrency: WorkflowConcurrencyKey
+
+on: 
+  workflow_dispatch:
+  push:
+    branches:
+    - main
+    - tutorial-03
+
+permissions:
+  id-token: write  ## Need to be able to write the ID token (i.e., ask Azure AD for token and write the response)
+  contents: read   ## Need to be able to read what it creates (i.e., read what was retrieved from Azure AD)
+
+env:
+    AZURE_RESOURCEGROUP_NAME: Xyz-Tutorial-03
+    ENVIRONMENT: nonprod
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3.3.0
+    
+    - uses: azure/login@v1
+      with:
+        ## Discussion: Arguable if these ID values are "secrets"(???)
+        ## - Must be able to authenticate as the GitHub branch/PR/whatever (as specified within Azure federated ID config), to be able to use these details
+        ## - Do not need to routinely rotate/revoke them etc
+        ## - Potential social engineering attack / information leverage vector?
+        ## - Advantageous to configure as secrets as it makes the workflow file transportable
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}               ## Application ID for the application registration, _not_ the object ID
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}               ## Unique identifier for your Azure AD tenant (directory)
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}   ## The Azure subscription ID being interacted with / deployed to
+
+    - uses: azure/arm-deploy@v1
+      with:
+        deploymentName: "GitHub-Workflow-Run-${{ github.run_number }}" ## Alphanumeric plus .-_ (i.e., `[a-zA-Z0-9.-_]+`)
+        resourceGroupName: ${{ env.AZURE_RESOURCEGROUP_NAME }}
+        template: ./deploy/main-tutorial-03.bicep
+        parameters: environmentType=${{ env.ENVIRONMENT }}
