@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-    - main
+    - tutorial-01
 
 permissions:
   id-token: write  ## Need to be able to write the ID token (i.e., ask Azure AD for token and write the response)
@@ -36,5 +36,5 @@ jobs:
       with:
         deploymentName: "GitHub-Workflow-Run-${{ github.run_number }}" ## Alphanumeric plus .-_ (i.e., `[a-zA-Z0-9.-_]+`)
         resourceGroupName: ${{ env.AZURE_RESOURCEGROUP_NAME }}
-        template: ./deploy/main.bicep
+        template: ./deploy/main-tutorial-01.bicep
         parameters: environmentType=${{ env.ENVIRONMENT }}

@@ -12,7 +12,7 @@ param environmentType string
 @maxLength(13)
 param resourceNameSuffix string = uniqueString(resourceGroup().id)
 
-var namePrefix = 'xyz'
+var namePrefix = 'xyz-tutorial-01'
 
 var appServiceAppName = '${namePrefix}-${resourceNameSuffix}'
 var appServicePlanName = '${namePrefix}-plan'
