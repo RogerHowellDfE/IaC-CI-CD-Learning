@@ -120,6 +120,10 @@ jobs:
         template: ${{ env.PATH_TO_BICEP_FILE }}
         parameters: environmentType=${{ env.ENVIRONMENT_TYPE }}
 
+    - run: echo ${{ steps.deploy.outputs.containerName }}
+    - run: echo ${{ steps.deploy.outputs.appServiceAppHostName }}
+    - run: echo ${{ steps.deploy.outputs }}
+
 
   
   smoke-test:
