@@ -12,7 +12,7 @@ permissions:
   contents: read   ## Need to be able to read what it creates (i.e., read what was retrieved from Azure AD)
 
 env:
-    AZURE_RESOURCEGROUP_NAME: Xyz
+    AZURE_RESOURCEGROUP_NAME: Xyz-Tutorial-01
     ENVIRONMENT: nonprod
 
 jobs:

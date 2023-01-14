@@ -6,14 +6,22 @@
 $githubOrganisationName = 'RogerHowellDfE'
 $githubRepositoryName = 'IaC-CI-CD-Learning'
 
+###
+$branchName = 'tutorial-01'
+$tutorialSuffix = "-${$branchName}"
+
 ### AD Application
-$adApplicationDisplayName = 'bicep-ci-cd-learning-github-workflow'
-$adApplicationName = 'bicep-ci-cd-learning-github-workflow'
+$adApplicationDisplayName = "bicep-ci-cd-learning-github-workflow${$tutorialSuffix}"
+$adApplicationName = "bicep-ci-cd-learning-github-workflow${$tutorialSuffix}"
 
 ### Resource Group
-$resourceGroupName = 'Xyz-tutorial-01'
+$resourceGroupName = "Xyz${$tutorialSuffix}"
 $resourceGroupLocation = 'uksouth'
 
+
+Write-Host $branchName
+Write-Host $tutorialSuffix
+Write-Host $resourceGroupName
 
 ## Login to Azure Portal account 
 ## - Note that this is interactive, and will launch a browser window to do login
@@ -27,8 +35,14 @@ $resourceGroup = New-AzResourceGroup -Name $($resourceGroupName) -Location $($re
 Get-AzResourceGroup -Name $($resourceGroupName)
 
 
-## Create new Azure Active Directory (AD) Application
-$applicationRegistration = New-AzADApplication -DisplayName "$($adApplicationDisplayName)"
+## Create new Azure Active Directory (AD) Application, only if it doesn't already exist
+$applicationRegistration
+if(((Get-AzADApplication -DisplayName $adApplicationDisplayName) | measure).Count -gt 0) {
+    Write-Error 'Not creating new AD Application Registration - one already exists with this name'
+    ## exit 1
+} else {
+    $applicationRegistration = New-AzADApplication -DisplayName "$($adApplicationDisplayName)"
+}
 
 ## Show (newly-created) application details
 ## Also visible in Web UI: 
@@ -52,9 +66,8 @@ Write-Host "AZURE_CLIENT_ID:       $((Get-AzADApplication -DisplayName $adApplic
 ## Create Azure AD Application Federated Credentials for the (newly-created) AD Application Registration to be accessed by GitHub
 ## See tutorial 02 for addiitonal detail about this (short version: we're telling Azure which GitHub credentials are permitted)
 ## 
-## - Below is specifically for the `tutorial-01` branch of this specific repo (also possible to apply to environments, pull requests, tags)
+## - Below is specifically for the `${$branchName}` branch of this specific repo (also possible to apply to environments, pull requests, tags)
 ##
-$branchName = 'tutorial-01'
 New-AzADAppFederatedCredential `
    -Name "$($adApplicationName)-github-branch-$($branchName)"`
    -ApplicationObjectId $application.Id `
