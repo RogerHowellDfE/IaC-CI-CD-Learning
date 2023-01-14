@@ -37,6 +37,9 @@ jobs:
         client-id: ${{ secrets.AZURE_CLIENT_ID_TUTORIAL_03 }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    - name: output environment type (debugging step)
+      shell: pwsh
+      run: Write-Host ${{ env.ENVIRONMENT_TYPE }}
     - uses: azure/arm-deploy@v1
       name: Run preflight validation
       with:
