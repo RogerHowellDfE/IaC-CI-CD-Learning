@@ -34,19 +34,15 @@ New-AzADAppFederatedCredential `
 
 
 ## Show (newly-created) application details
+## Also visible in Web UI: 
+## - https://portal.azure.com/#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/RegisteredApps
 Get-AzADApplication -DisplayName $adApplicationDisplayName
 Get-AzADApplication -OwnedApplication
 
 
-## Create new resource group
-$resourceGroup = New-AzResourceGroup -Name $($resourceGroupName) -Location $($resourceGroupLocation)
-
-## Assign workflow identity permissions to the (newly-created) resource group
-New-AzADServicePrincipal -AppId $applicationRegistration.AppId
-New-AzRoleAssignment `
-   -ApplicationId $($applicationRegistration.AppId) `
-   -RoleDefinitionName Contributor `
-   -Scope $resourceGroup.ResourceId
+## Get reference to application 
+## - Note: Mostly interchangable with using `$applicationRegistration`, but `$applicationRegistration` exists only when the application is first created
+$application = Get-AzADApplication -DisplayName $adApplicationDisplayName
 
 
 ## Get secrets associated with (newly-created) application
@@ -54,6 +50,21 @@ New-AzRoleAssignment `
 Write-Host "AZURE_TENANT_ID:       $((Get-AzContext).Tenant.Id)"
 Write-Host "AZURE_SUBSCRIPTION_ID: $((Get-AzContext).Subscription.Id)"
 Write-Host "AZURE_CLIENT_ID:       $((Get-AzADApplication -DisplayName $adApplicationDisplayName).AppId)" ## Instructions state `.ApplicationId`, but actually `.AppId`
+
+
+## Create new resource group
+$resourceGroup = New-AzResourceGroup -Name $($resourceGroupName) -Location $($resourceGroupLocation)
+
+## Show the resource group
+Get-AzResourceGroup -Name $($resourceGroupName)
+
+
+## Assign workflow identity permissions to the (newly-created) resource group
+New-AzADServicePrincipal -AppId $application.AppId
+New-AzRoleAssignment `
+   -ApplicationId $($application.AppId) `
+   -RoleDefinitionName Contributor `
+   -Scope $resourceGroup.ResourceId
 
 
 
