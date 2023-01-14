@@ -13,7 +13,7 @@ permissions:
 
 env:
     AZURE_RESOURCEGROUP_NAME: Xyz-Tutorial-03
-    ENVIRONMENT: nonprod
+    ENVIRONMENT_TYPE: nonprod
     DEPLOYMENT_NAME: "GitHub-Workflow-Run-${{ github.run_number }}" ## Alphanumeric plus .-_ (i.e., `[a-zA-Z0-9.-_]+`)
     PATH_TO_BICEP_FILE: ./deploy/main-tutorial-03.bicep
 
