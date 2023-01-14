@@ -74,6 +74,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: Tutorial-03      ## Environment protection rules on this environment specification in GitHub will trigger requirement for manual approval
     needs: [preview]
+    outputs:
+      appServiceAppHostName: ${{ steps.deploy.outputs.appServiceAppHostName }}
     steps:
     - uses: actions/checkout@v3.3.0
     
@@ -108,6 +110,7 @@ jobs:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}   ## The Azure subscription ID being interacted with / deployed to
 
     - uses: azure/arm-deploy@v1
+      id: deploy
       with:
         ## When using custom linter configuration, Bicep writes log data to stderr, which GHA interprets as an error
         ## Disabling, per https://learn.microsoft.com/en-gb/training/modules/test-bicep-code-using-github-actions/5-exercise-add-lint-validate-jobs-workflow
@@ -117,4 +120,23 @@ jobs:
         template: ${{ env.PATH_TO_BICEP_FILE }}
         parameters: environmentType=${{ env.ENVIRONMENT_TYPE }}
 
+
+  
+  smoke-test:
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+    - uses: actions/checkout@v3
+
+    ## PowerShell and Pester are both preinstalled on GitHub-hosted runners. You don't need to do anything special to use them in a script step.
+    ## https://learn.microsoft.com/en-gb/training/modules/test-bicep-code-using-github-actions/9-exercise-add-test-job-workflow?pivots=powershell
+    - run: |
+        $container = New-PesterContainer `
+          -Path 'deploy/Website.Tests.ps1' `
+          -Data @{ HostName = '${{needs.deploy.outputs.appServiceAppHostName}}' }
+        Invoke-Pester `
+          -Container $container `
+          -CI
+      name: Run smoke tests
+      shell: pwsh
 
