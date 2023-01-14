@@ -37,9 +37,6 @@ jobs:
         client-id: ${{ secrets.AZURE_CLIENT_ID_TUTORIAL_03 }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-    - name: output environment type (debugging step)
-      shell: pwsh
-      run: Write-Host ${{ env.ENVIRONMENT_TYPE }}
     - uses: azure/arm-deploy@v1
       name: Run preflight validation
       with:
@@ -49,9 +46,32 @@ jobs:
         parameters: environmentType=${{ env.ENVIRONMENT_TYPE }}
         deploymentMode: Validate
 
+  preview:
+     runs-on: ubuntu-latest
+     needs: [lint, validate]
+     steps: 
+     - uses: azure/login@v1
+       name: Sign in to Azure
+       with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID_TUTORIAL_03 }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+     - uses: azure/arm-deploy@v1
+       name: Run what-if
+       with:
+        ## When using custom linter configuration, Bicep writes log data to stderr, which GHA interprets as an error
+        ## Disabling, per https://learn.microsoft.com/en-gb/training/modules/test-bicep-code-using-github-actions/5-exercise-add-lint-validate-jobs-workflow
+        failOnStdErr: false
+        resourceGroupName: ${{ env.AZURE_RESOURCEGROUP_NAME }}
+        template: ${{ env.PATH_TO_BICEP_FILE }}
+        parameters: >
+          environmentType=${{ env.ENVIRONMENT_TYPE }}
+        additionalArguments: --what-if
+
   deploy:
     runs-on: ubuntu-latest
-    needs: [lint, validate]
+    environment: Tutorial-03      ## Environment protection rules on this environment specification in GitHub will trigger requirement for manual approval
+    needs: [preview]
     steps:
     - uses: actions/checkout@v3.3.0
 
