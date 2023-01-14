@@ -20,6 +20,13 @@ $resourceGroupLocation = 'uksouth'
 Connect-AzAccount
 
 
+## Create new resource group
+$resourceGroup = New-AzResourceGroup -Name $($resourceGroupName) -Location $($resourceGroupLocation)
+
+## Show the resource group
+Get-AzResourceGroup -Name $($resourceGroupName)
+
+
 ## Create new Azure Active Directory (AD) Application
 $applicationRegistration = New-AzADApplication -DisplayName "$($adApplicationDisplayName)"
 
@@ -56,14 +63,6 @@ New-AzADAppFederatedCredential `
 
 ## See (newly-created) federated permissions here:
 ## https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Credentials/appId/<REDACTED-APP-ID>/isMSAApp~/false
-
-
-
-## Create new resource group
-$resourceGroup = New-AzResourceGroup -Name $($resourceGroupName) -Location $($resourceGroupLocation)
-
-## Show the resource group
-Get-AzResourceGroup -Name $($resourceGroupName)
 
 
 ## Assign workflow identity permissions to the (newly-created) resource group
