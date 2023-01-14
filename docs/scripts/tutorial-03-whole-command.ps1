@@ -77,12 +77,34 @@ Write-Host "AZURE_CLIENT_ID:       $((Get-AzADApplication -DisplayName $adApplic
 ## 
 ## - Below is specifically for the `$(branchName)` branch of this specific repo (also possible to apply to environments, pull requests, tags)
 ##
+$federatedCredentialName_tutorialSpecificBranch = "$($adApplicationName)-github-branch-$($branchName)"
 New-AzADAppFederatedCredential `
-   -Name "$($adApplicationName)-github-branch-$($branchName)"`
+   -Name $federatedCredentialName_tutorialSpecificBranch`
    -ApplicationObjectId $application.Id `
    -Issuer 'https://token.actions.githubusercontent.com' `
    -Audience 'api://AzureADTokenExchange' `
    -Subject "repo:$($githubOrganisationName)/$($githubRepositoryName):ref:refs/heads/$($branchName)"
+
+
+# ## Optionally also trigger for main branch
+# $federatedCredentialName_mainBranch = "$($adApplicationName)-github-branch-main"
+# New-AzADAppFederatedCredential `
+#    -Name $federatedCredentialName_mainBranch`
+#    -ApplicationObjectId $application.Id `
+#    -Issuer 'https://token.actions.githubusercontent.com' `
+#    -Audience 'api://AzureADTokenExchange' `
+#    -Subject "repo:$($githubOrganisationName)/$($githubRepositoryName):ref:refs/heads/$($branchName)"
+
+
+## For Tutorial 03, we introduce the use of environments
+## This means we ALSO need to grant permission when running in the context of an environment
+$federatedCredentialName_environment = "$($adApplicationName)-github-environment-$($branchName)"
+New-AzADAppFederatedCredential `
+   -Name $federatedCredentialName_environment`
+   -ApplicationObjectId $application.Id `
+   -Issuer 'https://token.actions.githubusercontent.com' `
+   -Audience 'api://AzureADTokenExchange' `
+   -Subject "repo:$($githubOrganisationName)/$($githubRepositoryName):environment:$($branchName)"
 
 ## See (newly-created) federated permissions here:
 ## https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Credentials/appId/<REDACTED-APP-ID>/isMSAApp~/false

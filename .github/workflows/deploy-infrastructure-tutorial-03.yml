@@ -76,7 +76,7 @@ jobs:
     needs: [preview]
     steps:
     - uses: actions/checkout@v3.3.0
-    
+
     - uses: azure/login@v1
       with:
         ## Discussion: Arguable if these ID values are "secrets"(???)
