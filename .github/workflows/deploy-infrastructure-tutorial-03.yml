@@ -120,9 +120,17 @@ jobs:
         template: ${{ env.PATH_TO_BICEP_FILE }}
         parameters: environmentType=${{ env.ENVIRONMENT_TYPE }}
 
-    - run: echo ${{ steps.deploy.outputs.containerName }}
-    - run: echo ${{ steps.deploy.outputs.appServiceAppHostName }}
-    - run: echo ${{ steps.deploy.outputs }}
+
+    - shell: pwsh
+      run: Write-Host ${{ steps.deploy.outputs.containerName }}
+    - shell: pwsh
+      run: Write-Host ${{ steps.deploy.outputs.appServiceAppHostName }}
+    - shell: pwsh
+      run: Write-Host ${{ steps.deploy.outputs }}
+    - shell: pwsh
+      run: Write-Host ${{ steps.deploy.outputs }}  | ConvertFrom-Json | ConvertTo-Json 
+    - shell: pwsh
+      run: Write-Host ${{ steps.deploy.outputs }}  | ConvertTo-Json   | ConvertFrom-Json
 
 
   
