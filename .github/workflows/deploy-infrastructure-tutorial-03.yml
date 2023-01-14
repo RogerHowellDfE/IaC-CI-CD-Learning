@@ -69,6 +69,7 @@ jobs:
         parameters: environmentType=${{ env.ENVIRONMENT_TYPE }}
         additionalArguments: --what-if
 
+
   deploy:
     runs-on: ubuntu-latest
     environment: Tutorial-03      ## Environment protection rules on this environment specification in GitHub will trigger requirement for manual approval
@@ -78,9 +79,6 @@ jobs:
     
     - uses: azure/login@v1
       with:
-        ## When using custom linter configuration, Bicep writes log data to stderr, which GHA interprets as an error
-        ## Disabling, per https://learn.microsoft.com/en-gb/training/modules/test-bicep-code-using-github-actions/5-exercise-add-lint-validate-jobs-workflow
-        failOnStdErr: false
         ## Discussion: Arguable if these ID values are "secrets"(???)
         ## - Must be able to authenticate as the GitHub branch/PR/whatever (as specified within Azure federated ID config), to be able to use these details
         ## - Do not need to routinely rotate/revoke them etc
@@ -92,9 +90,13 @@ jobs:
 
     - uses: azure/arm-deploy@v1
       with:
+        ## When using custom linter configuration, Bicep writes log data to stderr, which GHA interprets as an error
+        ## Disabling, per https://learn.microsoft.com/en-gb/training/modules/test-bicep-code-using-github-actions/5-exercise-add-lint-validate-jobs-workflow
+        failOnStdErr: false
         deploymentName: "GitHub-Workflow-Run-${{ github.run_number }}" ## Alphanumeric plus .-_ (i.e., `[a-zA-Z0-9.-_]+`)
         resourceGroupName: ${{ env.AZURE_RESOURCEGROUP_NAME }}
         template: ${{ env.PATH_TO_BICEP_FILE }}
         parameters: environmentType=${{ env.ENVIRONMENT_TYPE }}
+
 
 
