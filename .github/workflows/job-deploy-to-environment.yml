@@ -30,6 +30,7 @@ permissions:
 jobs:
 
   lint:
+    name: lint bicep file - ${{ inputs.pathToBicepFile }}
     uses: ./.github/workflows/job-lint-bicep.yml
     with:
       pathToBicepFile: ${{ inputs.pathToBicepFile }}
