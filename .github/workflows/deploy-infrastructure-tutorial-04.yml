@@ -23,7 +23,7 @@ jobs:
   lint:
     uses: ./.github/workflows/job-lint-bicep.yml
     with:
-      pathToBicepFile: ./deploy/main-tutorial-04.bicep
+      pathToBicepFile: ${{ env.AZURE_RESOURCEGROUP_NAME }}
 
   validate:
     # needs: [lint]
