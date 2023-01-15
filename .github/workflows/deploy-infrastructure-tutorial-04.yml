@@ -50,8 +50,6 @@ jobs:
       AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
   deploy:
-    runs-on: ubuntu-latest
-    environment: Tutorial-04      ## Environment protection rules on this environment specification in GitHub will trigger requirement for manual approval
     needs: [preview]
     uses: ./.github/workflows/job-deploy.yml
     with:
