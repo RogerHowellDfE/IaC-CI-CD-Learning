@@ -21,7 +21,7 @@ jobs:
 
   # Lint the Bicep file.
   lint:
-    uses: ./.github/workflows/lint.yml
+    uses: ./.github/workflows/job-lint-bicep.yml
     with:
       pathToBicepFile: ${{ env.PATH_TO_BICEP_FILE }}
 
