@@ -19,12 +19,11 @@ env:
 
 jobs:
 
+  # Lint the Bicep file.
   lint:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Run Bicep linter
-      run: az bicep build --file ${{ env.PATH_TO_BICEP_FILE }} ## Performing `bulld` implicitly runs linter
+    uses: ./.github/workflows/lint.yml
+    with:
+      pathToBicepFile: ${{ env.PATH_TO_BICEP_FILE }}
 
   validate:
     runs-on: ubuntu-latest
