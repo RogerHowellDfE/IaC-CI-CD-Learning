@@ -12,6 +12,7 @@ permissions:
   contents: read   ## Need to be able to read what it creates (i.e., read what was retrieved from Azure AD)
 
 env:
+    ENVIRONMENT_NAME_PREFIX: Tutorial-04
     AZURE_RESOURCEGROUP_NAME: Xyz-Tutorial-04
     DEPLOYMENT_NAME: "GitHub-Workflow-Run-${{ github.run_number }}" ## Alphanumeric plus .-_ (i.e., `[a-zA-Z0-9.-_]+`)
     PATH_TO_BICEP_FILE: ./deploy/main-tutorial-04.bicep
@@ -31,15 +32,18 @@ jobs:
       - name: Set Variables
         id: step1
         run: |
-          echo "PATH_TO_BICEP_FILE=${{ env.PATH_TO_BICEP_FILE }}" >> $GITHUB_OUTPUT
           echo "AZURE_RESOURCEGROUP_NAME=${{ env.AZURE_RESOURCEGROUP_NAME }}" >> $GITHUB_OUTPUT
           echo "DEPLOYMENT_NAME=${{ env.DEPLOYMENT_NAME }}" >> $GITHUB_OUTPUT
+          echo "ENVIRONMENT_NAME_PREFIX=${{ env.ENVIRONMENT_NAME_PREFIX }}" >> $GITHUB_OUTPUT
+          echo "PATH_TO_BICEP_FILE=${{ env.PATH_TO_BICEP_FILE }}" >> $GITHUB_OUTPUT
       - name: Output Variables
         run: |
           echo ${{ steps.step1.outputs.AZURE_RESOURCEGROUP_NAME }}
           echo ${{ steps.step1.outputs.DEPLOYMENT_NAME }}
+          echo ${{ steps.step1.outputs.ENVIRONMENT_NAME_PREFIX }}
           echo ${{ steps.step1.outputs.PATH_TO_BICEP_FILE }}
 
+  ## Fail workflow if error in specifying variables above (i.e., if they're empty string)
   test_var_availability:
     needs: [setup_vars]
     runs-on: ubuntu-latest
@@ -48,6 +52,7 @@ jobs:
         variableName : 
         - AZURE_RESOURCEGROUP_NAME
         - DEPLOYMENT_NAME
+        - ENVIRONMENT_NAME_PREFIX
         - PATH_TO_BICEP_FILE
     steps:
       - name: Check variable is set - ${{ matrix.variableName }}
@@ -72,9 +77,9 @@ jobs:
     # needs: [lint]
     uses: ./.github/workflows/job-validate-bicep.yml
     with:
-      pathToBicepFile: ./deploy/main-tutorial-04.bicep
+      pathToBicepFile: ${{ needs.setup_vars.outputs.PATH_TO_BICEP_FILE }}
       environmentType: nonprod
-      resourceGroupName: Xyz-Tutorial-04
+      resourceGroupName: ${{ needs.setup_vars.outputs.AZURE_RESOURCEGROUP_NAME}}
     secrets:
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_TUTORIAL_04 }}
       AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
@@ -84,9 +89,9 @@ jobs:
     needs: [lint, validate]
     uses: ./.github/workflows/job-preview-bicep.yml
     with:
-      pathToBicepFile: ./deploy/main-tutorial-04.bicep
+      pathToBicepFile: ${{ needs.setup_vars.outputs.PATH_TO_BICEP_FILE }}
       environmentType: nonprod
-      resourceGroupName: Xyz-Tutorial-04
+      resourceGroupName: ${{ needs.setup_vars.outputs.AZURE_RESOURCEGROUP_NAME}}
     secrets:
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_TUTORIAL_04 }}
       AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
@@ -96,10 +101,10 @@ jobs:
     needs: [preview]
     uses: ./.github/workflows/job-deploy.yml
     with:
-      pathToBicepFile: ./deploy/main-tutorial-04.bicep
-      environmentNamePrefix: Tutorial-04
+      pathToBicepFile: ${{ needs.setup_vars.outputs.PATH_TO_BICEP_FILE }}
+      environmentNamePrefix: ${{ needs.setup_vars.outputs.ENVIRONMENT_NAME_PREFIX}}
       environmentType: nonprod
-      resourceGroupName: Xyz-Tutorial-04
+      resourceGroupName: ${{ needs.setup_vars.outputs.AZURE_RESOURCEGROUP_NAME}}
     secrets:
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_TUTORIAL_04 }}
       AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
