@@ -34,16 +34,17 @@ jobs:
     needs: [setup_vars]
     runs-on: ubuntu-latest
     steps:
-      - run: echo ${{ needs.setup_vars.PATH_TO_BICEP_FILE }}
+      - run: echo ${{ needs.setup_vars.outputs.PATH_TO_BICEP_FILE }}
 
 
   lint:
-    needs: [setup_vars]
+    needs: [test_vars]
     uses: ./.github/workflows/job-lint-bicep.yml
     with:
-      pathToBicepFile: ${{ needs.setup_vars.PATH_TO_BICEP_FILE }}
+      pathToBicepFile: ${{ needs.setup_vars.outputs.PATH_TO_BICEP_FILE }}
 
   validate:
+    needs: [setup_vars]
     # needs: [lint]
     uses: ./.github/workflows/job-validate-bicep.yml
     with:
