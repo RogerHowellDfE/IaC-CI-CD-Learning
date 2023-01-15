@@ -79,7 +79,7 @@ Write-Host "AZURE_CLIENT_ID:       $((Get-AzADApplication -DisplayName $adApplic
 ##
 $federatedCredentialName_tutorialSpecificBranch = "$($adApplicationName)-github-branch-$($branchName)"
 New-AzADAppFederatedCredential `
-   -Name $federatedCredentialName_tutorialSpecificBranch`
+   -Name $federatedCredentialName_tutorialSpecificBranch `
    -ApplicationObjectId $application.Id `
    -Issuer 'https://token.actions.githubusercontent.com' `
    -Audience 'api://AzureADTokenExchange' `
@@ -89,7 +89,7 @@ New-AzADAppFederatedCredential `
 # ## Optionally also trigger for main branch
 # $federatedCredentialName_mainBranch = "$($adApplicationName)-github-branch-main"
 # New-AzADAppFederatedCredential `
-#    -Name $federatedCredentialName_mainBranch`
+#    -Name $federatedCredentialName_mainBranch `
 #    -ApplicationObjectId $application.Id `
 #    -Issuer 'https://token.actions.githubusercontent.com' `
 #    -Audience 'api://AzureADTokenExchange' `
@@ -100,7 +100,7 @@ New-AzADAppFederatedCredential `
 ## This means we ALSO need to grant permission when running in the context of an environment
 $federatedCredentialName_environment = "$($adApplicationName)-github-environment-$($branchName)"
 New-AzADAppFederatedCredential `
-   -Name $federatedCredentialName_environment`
+   -Name $federatedCredentialName_environment `
    -ApplicationObjectId $application.Id `
    -Issuer 'https://token.actions.githubusercontent.com' `
    -Audience 'api://AzureADTokenExchange' `
