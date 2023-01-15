@@ -77,7 +77,8 @@ jobs:
 
   validate:
     name: validate bicep file for environment - ${{ inputs.environmentType }}
-    # needs: [lint, validate_inputs_availability, validate_secrets_availability]
+    needs: [validate_inputs_availability, validate_secrets_availability]
+    # needs: [lint]
     uses: ./.github/workflows/job-validate-bicep.yml
     with:
       pathToBicepFile: ${{ inputs.pathToBicepFile }}
