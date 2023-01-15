@@ -70,6 +70,7 @@ jobs:
 
   lint:
     name: lint bicep file - ${{ inputs.pathToBicepFile }}
+    needs: [validate_inputs_availability, validate_secrets_availability]
     uses: ./.github/workflows/job-lint-bicep.yml
     with:
       pathToBicepFile: ${{ inputs.pathToBicepFile }}
