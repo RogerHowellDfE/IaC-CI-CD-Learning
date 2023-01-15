@@ -91,7 +91,8 @@ jobs:
 
   preview:
     name: preview (what-if) to ${{ inputs.environmentNamePrefix }} - ${{ inputs.environmentType }}
-    needs: [lint, validate]
+    needs: [lint]
+    # needs: [lint, validate]
     uses: ./.github/workflows/job-preview-bicep.yml
     with:
       pathToBicepFile: ${{ inputs.pathToBicepFile }}
