@@ -37,6 +37,7 @@ jobs:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    - name: Do not be alarmed by stderr output by bicep - expected/normal quirk
     - uses: azure/arm-deploy@v1
       name: Run preflight validation
       with:
