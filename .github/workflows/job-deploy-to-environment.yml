@@ -1,0 +1,75 @@
+name: deploy to environment
+
+on: 
+  workflow_call:
+    inputs:
+      pathToBicepFile:
+        required: true
+        type: string
+      environmentNamePrefix:
+        required: true
+        type: string
+      environmentType:
+        required: true
+        type: string
+      resourceGroupName:
+        required: true
+        type: string
+    secrets:
+      AZURE_CLIENT_ID:
+        required: true
+      AZURE_TENANT_ID:
+        required: true
+      AZURE_SUBSCRIPTION_ID:
+        required: true
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+
+  lint:
+    uses: ./.github/workflows/job-lint-bicep.yml
+    with:
+      pathToBicepFile: ${{ inputs.pathToBicepFile }}
+
+  validate:
+    name: validate bicep file for environment - ${{ inputs.environmentType }}
+    # needs: [lint]
+    uses: ./.github/workflows/job-validate-bicep.yml
+    with:
+      pathToBicepFile: ${{ inputs.pathToBicepFile }}
+      environmentType: ${{ inputs.environmentType }}
+      resourceGroupName: ${{ inputs.environmentNamePrefix }}
+    secrets:
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_TUTORIAL_04 }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+  preview:
+    name: preview (what-if) to ${{ inputs.environmentNamePrefix }} - ${{ inputs.environmentType }}
+    needs: [lint, validate]
+    uses: ./.github/workflows/job-preview-bicep.yml
+    with:
+      pathToBicepFile: ${{ inputs.pathToBicepFile }}
+      environmentType: ${{ inputs.environmentType }}
+      resourceGroupName: ${{ inputs.environmentNamePrefix }}
+    secrets:
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_TUTORIAL_04 }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+  deploy:
+    name: deploy to ${{ inputs.environmentNamePrefix }} - ${{ inputs.environmentType }}
+    needs: [preview]
+    uses: ./.github/workflows/job-deploy.yml
+    with:
+      pathToBicepFile: ${{ inputs.pathToBicepFile }}
+      environmentNamePrefix: ${{ inputs.environmentNamePrefix }}
+      environmentType: ${{ inputs.environmentType }}
+      resourceGroupName: ${{ inputs.environmentNamePrefix }}
+    secrets:
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_TUTORIAL_04 }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
