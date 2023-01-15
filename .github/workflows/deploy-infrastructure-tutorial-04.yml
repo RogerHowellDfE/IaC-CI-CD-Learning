@@ -45,6 +45,7 @@ jobs:
           echo ${{ steps.step1.outputs.PATH_TO_BICEP_FILE }}
 
   ## Fail workflow if error in specifying variables above (i.e., if they're empty string)
+  ## Note: Deliberately a separate job, to validate that variable content is available via job outputs
   test_var_availability:
     needs: [setup_vars]
     runs-on: ubuntu-latest
@@ -56,7 +57,7 @@ jobs:
         - ENVIRONMENT_NAME_PREFIX
         - PATH_TO_BICEP_FILE
     steps:
-      - name: Check variable is set - ${{ matrix.variableName }}
+      - name: Variable is set and available via job outputs - needs.setup_vars.outputs.${{ matrix.variableName }}
         shell: bash
         run: |
           if [ "${{ needs.setup_vars.outputs[format('{0}', matrix.variableName)] }}" != '' ]; then
@@ -68,13 +69,13 @@ jobs:
 
           
   lint:
-    needs: [test_var_availability]
+    needs: [setup_vars, test_var_availability]
     uses: ./.github/workflows/job-lint-bicep.yml
     with:
       pathToBicepFile: ${{ needs.setup_vars.outputs.PATH_TO_BICEP_FILE }}
 
   validate:
-    needs: [test_var_availability]
+    needs: [setup_vars, test_var_availability]
     # needs: [lint]
     uses: ./.github/workflows/job-validate-bicep.yml
     with:
@@ -87,7 +88,7 @@ jobs:
       AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
   preview:
-    needs: [lint, validate]
+    needs: [setup_vars, lint, validate]
     uses: ./.github/workflows/job-preview-bicep.yml
     with:
       pathToBicepFile: ${{ needs.setup_vars.outputs.PATH_TO_BICEP_FILE }}
@@ -99,7 +100,7 @@ jobs:
       AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
   deploy:
-    needs: [preview]
+    needs: [setup_vars, preview]
     uses: ./.github/workflows/job-deploy.yml
     with:
       pathToBicepFile: ${{ needs.setup_vars.outputs.PATH_TO_BICEP_FILE }}
