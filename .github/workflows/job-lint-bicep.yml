@@ -1,0 +1,17 @@
+name: lint bicep
+
+on: 
+  workflow_call:
+    inputs:
+      pathToBicepFile:
+        required: true
+        type: string
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Run Bicep linter
+      run: az bicep build --file ${{ inputs.pathToBicepFile }} ## Performing `bulld` implicitly runs linter
+

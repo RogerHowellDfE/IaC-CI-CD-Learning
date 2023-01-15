@@ -1,0 +1,51 @@
+name: preview bicep
+
+on: 
+  workflow_call:
+    inputs:
+      pathToBicepFile:
+        required: true
+        type: string
+      environmentType:
+        required: true
+        type: string
+      resourceGroupName:
+        required: true
+        type: string
+    secrets:
+      AZURE_CLIENT_ID:
+        required: true
+      AZURE_TENANT_ID:
+        required: true
+      AZURE_SUBSCRIPTION_ID:
+        required: true
+
+
+permissions:
+  id-token: write
+  contents: read
+
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: azure/login@v1
+      name: Sign in to Azure
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - uses: azure/arm-deploy@v1
+      name: Run what-if
+      with:
+        resourceGroupName: ${{ inputs.resourceGroupName }}
+        template: ${{ inputs.pathToBicepFile }}
+        parameters: environmentType=${{ inputs.environmentType }}
+        ## When using custom linter configuration, Bicep writes log data to stderr, which GHA interprets as an error
+        ## Disabling, per https://learn.microsoft.com/en-gb/training/modules/test-bicep-code-using-github-actions/5-exercise-add-lint-validate-jobs-workflow
+        failOnStdErr: false
+        additionalArguments: --what-if
+
