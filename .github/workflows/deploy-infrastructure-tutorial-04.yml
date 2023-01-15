@@ -41,7 +41,7 @@ jobs:
       - name: Check variables are set
         shell: bash
         run: |
-          if [ "${{ needs.setup_vars.outputs.PATH_TO_BICEP_FILE }}" == '' ]; then
+          if [ "${{ needs.setup_vars.outputs.PATH_TO_BICEP_FILE }}" != '' ]; then
             echo "needs.setup_vars.outputs.PATH_TO_BICEP_FILE is set";
           else
             echo >&2 "needs.setup_vars.outputs.PATH_TO_BICEP_FILE unavailable";
