@@ -43,7 +43,7 @@ jobs:
         ## - Do not need to routinely rotate/revoke them etc
         ## - Potential social engineering attack / information leverage vector?
         ## - Advantageous to configure as secrets as it makes the workflow file transportable
-        client-id: ${{ secrets.AZURE_CLIENT_ID_TUTORIAL_04 }}   ## Application ID for the application registration, _not_ the object ID
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}   ## Application ID for the application registration, _not_ the object ID
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}               ## Unique identifier for your Azure AD tenant (directory)
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}   ## The Azure subscription ID being interacted with / deployed to
     - uses: azure/arm-deploy@v1
