@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     # Map a step output to a job output
     outputs:
-      PATH_TO_BICEP_FILE: ${{ steps.step1.outputs.AZURE_RESOURCEGROUP_NAME }}
+      PATH_TO_BICEP_FILE: ${{ steps.step1.outputs.PATH_TO_BICEP_FILE }}
     steps:
       - run: echo ${{ env.PATH_TO_BICEP_FILE }}
       - id: step1
