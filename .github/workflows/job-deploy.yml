@@ -1,0 +1,83 @@
+name: validate bicep
+
+on: 
+  workflow_call:
+    inputs:
+      pathToBicepFile:
+        required: true
+        type: string
+      environmentNamePrefix:
+        required: true
+        type: string
+      environmentType:
+        required: true
+        type: string
+      resourceGroupName:
+        required: true
+        type: string
+    secrets:
+      AZURE_CLIENT_ID:
+        required: true
+      AZURE_TENANT_ID:
+        required: true
+      AZURE_SUBSCRIPTION_ID:
+        required: true
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environmentNamePrefix }} - ${{ inputs.environmentType }}      ## Environment protection rules on this environment specification in GitHub will trigger requirement for manual approval
+    outputs:
+      ## Outputs from `deploy` must be specified withis the bicep file
+      appServiceAppHostName: ${{ steps.deploy.outputs.appServiceAppHostName }}
+    steps:
+    - uses: actions/checkout@v3.3.0
+    - uses: azure/login@v1
+      with:
+        ## Discussion: Arguable if these ID values are "secrets"(???)
+        ## - Must be able to authenticate as the GitHub branch/PR/whatever (as specified within Azure federated ID config), to be able to use these details
+        ## - Do not need to routinely rotate/revoke them etc
+        ## - Potential social engineering attack / information leverage vector?
+        ## - Advantageous to configure as secrets as it makes the workflow file transportable
+        client-id: ${{ secrets.AZURE_CLIENT_ID_TUTORIAL_04 }}   ## Application ID for the application registration, _not_ the object ID
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}               ## Unique identifier for your Azure AD tenant (directory)
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}   ## The Azure subscription ID being interacted with / deployed to
+    - uses: azure/arm-deploy@v1
+      id: deploy
+      with:
+        deploymentName: "GitHub-Workflow-Run-${{ inputs.environmentNamePrefix }}-${{ inputs.environmentType }}-${{ github.run_number }}" ## Alphanumeric plus .-_ (i.e., `[a-zA-Z0-9.-_]+`)
+        resourceGroupName: ${{ inputs.resourceGroupName }}
+        template: ${{ inputs.pathToBicepFile }}
+        parameters: environmentType=${{ inputs.environmentType }}
+        ## When using custom linter configuration, Bicep writes log data to stderr, which GHA interprets as an error
+        ## Disabling, per https://learn.microsoft.com/en-gb/training/modules/test-bicep-code-using-github-actions/5-exercise-add-lint-validate-jobs-workflow
+        failOnStdErr: false
+  smoke-test:
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Check app service hostname has been passed
+      shell: bash
+      run: |
+        if [ "${{ needs.deploy.outputs.appServiceAppHostName }}" != '' ]; then
+          echo "needs.deploy.outputs.appServiceAppHostName is set";
+        else
+          echo >&2 "needs.deploy.outputs.appServiceAppHostName unavailable";
+        fi
+    ## PowerShell and Pester are both preinstalled on GitHub-hosted runners. You don't need to do anything special to use them in a script step.
+    ## https://learn.microsoft.com/en-gb/training/modules/test-bicep-code-using-github-actions/9-exercise-add-test-job-workflow?pivots=powershell
+    - name: Run smoke tests
+      shell: pwsh
+      run: |
+        $container = New-PesterContainer `
+          -Path 'deploy/Website.Tests.ps1' `
+          -Data @{ HostName = '${{needs.deploy.outputs.appServiceAppHostName}}' }
+        Invoke-Pester `
+          -Container $container `
+          -CI
