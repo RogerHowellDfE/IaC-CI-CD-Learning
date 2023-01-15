@@ -39,7 +39,7 @@ jobs:
 
   preview:
      needs: [lint, validate]
-    uses: ./.github/workflows/job-validate-bicep.yml
+    uses: ./.github/workflows/job-preview-bicep.yml
     with:
       pathToBicepFile: ./deploy/main-tutorial-04.bicep
       environmentType: nonprod

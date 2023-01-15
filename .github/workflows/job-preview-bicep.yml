@@ -1,4 +1,4 @@
-name: validate bicep
+name: preview bicep
 
 on: 
   workflow_call:
@@ -27,7 +27,7 @@ permissions:
 
 
 jobs:
-  validate:
+  preview:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
