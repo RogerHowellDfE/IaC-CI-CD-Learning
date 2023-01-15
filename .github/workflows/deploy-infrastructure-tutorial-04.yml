@@ -55,6 +55,7 @@ jobs:
             echo "${{ matrix.variableName }} is set";
           else
             echo >&2 "${{ matrix.variableName }} unavailable";
+            exit 1
           fi
 
           
