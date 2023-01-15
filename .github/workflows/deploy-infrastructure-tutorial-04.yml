@@ -30,21 +30,29 @@ jobs:
       - id: step1
         run: |
           echo "PATH_TO_BICEP_FILE=${{ env.PATH_TO_BICEP_FILE }}" >> $GITHUB_OUTPUT
-
       - run: echo ${{ steps.step1.outputs.PATH_TO_BICEP_FILE }}
+      - name: Check variables are set
+        shell: bash
+        run: |
+          if [ "${{ steps.step1.outputs.PATH_TO_BICEP_FILE }}" != '' ]; then
+            echo "steps.step1.outputs.PATH_TO_BICEP_FILE is set";
+          else
+            echo >&2 "steps.step1.outputs.PATH_TO_BICEP_FILE unavailable";
+            exit 1
+          fi
 
   test_vars:
     needs: [setup_vars]
     runs-on: ubuntu-latest
     steps:
-      - run: echo ${{ jobs.setup_vars.outputs.PATH_TO_BICEP_FILE }}
+      - run: echo ${{ needs.setup_vars.outputs.PATH_TO_BICEP_FILE }}
       - name: Check variables are set
         shell: bash
         run: |
-          if [ "${{ jobs.setup_vars.outputs.PATH_TO_BICEP_FILE }}" != '' ]; then
-            echo "jobs.setup_vars.outputs.PATH_TO_BICEP_FILE is set";
+          if [ "${{ needs.setup_vars.outputs.PATH_TO_BICEP_FILE }}" != '' ]; then
+            echo "needs.setup_vars.outputs.PATH_TO_BICEP_FILE is set";
           else
-            echo >&2 "jobs.setup_vars.outputs.PATH_TO_BICEP_FILE unavailable";
+            echo >&2 "needs.setup_vars.outputs.PATH_TO_BICEP_FILE unavailable";
             exit 1
           fi
 
@@ -53,7 +61,7 @@ jobs:
     needs: [test_vars]
     uses: ./.github/workflows/job-lint-bicep.yml
     with:
-      pathToBicepFile: ${{ jobs.setup_vars.outputs.PATH_TO_BICEP_FILE }}
+      pathToBicepFile: ${{ needs.setup_vars.outputs.PATH_TO_BICEP_FILE }}
 
   validate:
     needs: [test_vars]
