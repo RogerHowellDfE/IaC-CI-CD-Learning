@@ -30,11 +30,18 @@ jobs:
         run: |
           echo "PATH_TO_BICEP_FILE=${{ env.PATH_TO_BICEP_FILE }}" >> $GITHUB_OUTPUT
 
+  test_vars:
+    needs: [setup_vars]
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo ${{ needs.setup_vars.PATH_TO_BICEP_FILE }}
+
+
   lint:
     needs: [setup_vars]
     uses: ./.github/workflows/job-lint-bicep.yml
     with:
-      pathToBicepFile: ${{ needs.setup_vars.env.PATH_TO_BICEP_FILE }}
+      pathToBicepFile: ${{ needs.setup_vars.PATH_TO_BICEP_FILE }}
 
   validate:
     # needs: [lint]
