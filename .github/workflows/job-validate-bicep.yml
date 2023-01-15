@@ -1,0 +1,48 @@
+name: validate bicep
+
+on: 
+  workflow_call:
+    inputs:
+      pathToBicepFile:
+        required: true
+        type: string
+      environmentType:
+        required: true
+        type: string
+      resourceGroupName:
+        required: true
+        type: string
+    secrets:
+      AZURE_CLIENT_ID:
+        required: true
+      AZURE_TENANT_ID:
+        required: true
+      AZURE_SUBSCRIPTION_ID:
+        required: true
+
+
+permissions:
+  id-token: write
+  contents: read
+
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: azure/login@v1
+      name: Sign in to Azure
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    - uses: azure/arm-deploy@v1
+      name: Run preflight validation
+      with:
+        deploymentName: ${{ env.DEPLOYMENT_NAME }}
+        resourceGroupName: ${{ env.AZURE_RESOURCEGROUP_NAME }}
+        template: ${{ env.PATH_TO_BICEP_FILE }}
+        parameters: environmentType=${{ env.ENVIRONMENT_TYPE }}
+        deploymentMode: Validate
+
