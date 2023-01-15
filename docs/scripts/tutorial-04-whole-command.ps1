@@ -98,13 +98,27 @@ New-AzADAppFederatedCredential `
 
 ## For Tutorial 03, we introduce the use of environments
 ## This means we ALSO need to grant permission when running in the context of an environment
-$federatedCredentialName_environment = "$($adApplicationName)-github-environment-$($branchName)"
+
+## For Tutorial 05, we introduced multiple environments
+## ... each of which have their own scope/subject
+
+$environmentType = 'nonprod'
+$federatedCredentialName_environment = "$($adApplicationName)-github-environment-$($branchName)-$($environmentType)"
 New-AzADAppFederatedCredential `
    -Name $federatedCredentialName_environment `
    -ApplicationObjectId $application.Id `
    -Issuer 'https://token.actions.githubusercontent.com' `
    -Audience 'api://AzureADTokenExchange' `
-   -Subject "repo:$($githubOrganisationName)/$($githubRepositoryName):environment:$($branchName)"
+   -Subject "repo:$($githubOrganisationName)/$($githubRepositoryName):environment:$($branchName) - $($environmentType)"
+
+$environmentType = 'prod'
+$federatedCredentialName_environment = "$($adApplicationName)-github-environment-$($branchName)-$($environmentType)"
+New-AzADAppFederatedCredential `
+   -Name $federatedCredentialName_environment `
+   -ApplicationObjectId $application.Id `
+   -Issuer 'https://token.actions.githubusercontent.com' `
+   -Audience 'api://AzureADTokenExchange' `
+   -Subject "repo:$($githubOrganisationName)/$($githubRepositoryName):environment:$($branchName) - $($environmentType)"
 
 ## See (newly-created) federated permissions here:
 ## https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Credentials/appId/<REDACTED-APP-ID>/isMSAApp~/false
