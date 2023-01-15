@@ -26,7 +26,6 @@ jobs:
       pathToBicepFile: ./deploy/main-tutorial-04.bicep
 
   validate:
-    runs-on: ubuntu-latest
     # needs: [lint]
     uses: ./.github/workflows/job-lint-bicep.yml
     with:
