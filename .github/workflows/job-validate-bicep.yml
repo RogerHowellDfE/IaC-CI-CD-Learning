@@ -40,9 +40,8 @@ jobs:
     - uses: azure/arm-deploy@v1
       name: Run preflight validation
       with:
-        deploymentName: ${{ env.DEPLOYMENT_NAME }}
-        resourceGroupName: ${{ env.AZURE_RESOURCEGROUP_NAME }}
-        template: ${{ env.PATH_TO_BICEP_FILE }}
-        parameters: environmentType=${{ env.ENVIRONMENT_TYPE }}
+        resourceGroupName: ${{ inputs.resourceGroupName }}
+        template: ${{ inputs.pathToBicepFile }}
+        parameters: environmentType=${{ inputs.environmentType }}
         deploymentMode: Validate
 
