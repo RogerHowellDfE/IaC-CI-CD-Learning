@@ -85,21 +85,20 @@ jobs:
       environmentType: ${{ inputs.environmentType }}
       resourceGroupName: ${{ inputs.environmentNamePrefix }}
     secrets:
-      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_TUTORIAL_04 }}
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
   preview:
     name: preview (what-if) to ${{ inputs.environmentNamePrefix }} - ${{ inputs.environmentType }}
-    needs: [lint]
-    # needs: [lint, validate]
+    needs: [lint, validate]
     uses: ./.github/workflows/job-preview-bicep.yml
     with:
       pathToBicepFile: ${{ inputs.pathToBicepFile }}
       environmentType: ${{ inputs.environmentType }}
       resourceGroupName: ${{ inputs.environmentNamePrefix }}
     secrets:
-      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_TUTORIAL_04 }}
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
@@ -113,6 +112,6 @@ jobs:
       environmentType: ${{ inputs.environmentType }}
       resourceGroupName: ${{ inputs.environmentNamePrefix }}
     secrets:
-      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_TUTORIAL_04 }}
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
