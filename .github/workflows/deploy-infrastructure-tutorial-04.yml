@@ -38,13 +38,11 @@ jobs:
           echo ${{ steps.step1.outputs.DEPLOYMENT_NAME }}
           echo ${{ steps.step1.outputs.PATH_TO_BICEP_FILE }}
 
-
-
   lint:
     needs: [setup_vars]
     uses: ./.github/workflows/job-lint-bicep.yml
     with:
-      pathToBicepFile: ${{ needs.setup_vars.outputs.PATH_TO_BICEP_FILE }}
+      pathToBicepFile: ${{ needs.setup_vars.outputs.PATH_TO_BICEP_FILE2 }}
 
   validate:
     needs: [setup_vars]
