@@ -26,6 +26,7 @@ jobs:
     outputs:
       PATH_TO_BICEP_FILE: ${{ steps.step1.outputs.AZURE_RESOURCEGROUP_NAME }}
     steps:
+      - run: echo ${{ env.PATH_TO_BICEP_FILE }}
       - id: step1
         run: |
           echo "PATH_TO_BICEP_FILE=${{ env.PATH_TO_BICEP_FILE }}" >> $GITHUB_OUTPUT
