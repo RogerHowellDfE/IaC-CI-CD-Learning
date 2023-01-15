@@ -69,7 +69,7 @@ jobs:
 
   deploy_nonprod:
     name: deploy to nonprod
-    needs: [setup_vars, preview]
+    needs: [test_var_availability]
     uses: ./.github/workflows/job-deployto-environment.yml
     with:
       pathToBicepFile: ${{ needs.setup_vars.outputs.PATH_TO_BICEP_FILE }}
@@ -83,7 +83,7 @@ jobs:
 
   deploy_prod:
     name: deploy to prod
-    needs: [setup_vars, preview]
+    needs: [deploy_nonprod]
     uses: ./.github/workflows/job-deployto-environment.yml
     with:
       pathToBicepFile: ${{ needs.setup_vars.outputs.PATH_TO_BICEP_FILE }}
