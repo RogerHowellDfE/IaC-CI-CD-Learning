@@ -46,7 +46,7 @@ Get-AzResourceGroup -Name $($resourceGroupName)
 ## Create new Azure Active Directory (AD) Application, only if it doesn't already exist
 ## Not explicitly required, but if check not performed then potential for `$application` to contain multiple values
 $applicationRegistration
-if(((Get-AzADApplication -DisplayName $adApplicationDisplayName) | measure).Count -gt 0) {
+if(((Get-AzADApplication -DisplayName $adApplicationDisplayName) | Measure-Object).Count -gt 0) {
     Write-Error 'Not creating new AD Application Registration - one already exists with this name'
     ## exit 1
 } else {
