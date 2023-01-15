@@ -29,6 +29,45 @@ permissions:
 
 jobs:
 
+  validate_inputs_availability:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: 
+        variableName : 
+        - pathToBicepFile
+        - environmentNamePrefix
+        - environmentType
+        - resourceGroupName
+    steps:
+      - name: Variable is set and available via job outputs - inputs.${{ matrix.variableName }}
+        shell: bash
+        run: |
+          if [ "${{ inputs[format('{0}', matrix.variableName)] }}" != '' ]; then
+            echo "${{ matrix.variableName }} is set";
+          else
+            echo >&2 "${{ matrix.variableName }} unavailable";
+            exit 1
+          fi
+
+  validate_secrets_availability:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: 
+        variableName : 
+        - AZURE_CLIENT_ID
+        - AZURE_TENANT_ID
+        - AZURE_SUBSCRIPTION_ID
+    steps:
+      - name: Variable is set and available via job outputs - secrets.${{ matrix.variableName }}
+        shell: bash
+        run: |
+          if [ "${{ secrets[format('{0}', matrix.variableName)] }}" != '' ]; then
+            echo "${{ matrix.variableName }} is set";
+          else
+            echo >&2 "${{ matrix.variableName }} unavailable";
+            exit 1
+          fi
+
   lint:
     name: lint bicep file - ${{ inputs.pathToBicepFile }}
     uses: ./.github/workflows/job-lint-bicep.yml
