@@ -38,14 +38,34 @@ jobs:
           echo ${{ steps.step1.outputs.DEPLOYMENT_NAME }}
           echo ${{ steps.step1.outputs.PATH_TO_BICEP_FILE }}
 
-  lint:
+  test_vars:
     needs: [setup_vars]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: 
+        variableName : 
+        - AZURE_RESOURCEGROUP_NAME
+        - DEPLOYMENT_NAME
+        - PATH_TO_BICEP_FILE
+    steps:
+      - name: Check variables are set - AZURE_RESOURCEGROUP_NAME
+        shell: bash
+        run: |
+          if [ "${{ needs.setup_vars.outputs[format('{0}', matrix.variableName)] }}" != '' ]; then
+            echo "${{ matrix.variableName }} is set";
+          else
+            echo >&2 "${{ matrix.variableName }} unavailable";
+          fi
+
+          
+  lint:
+    needs: [test_vars]
     uses: ./.github/workflows/job-lint-bicep.yml
     with:
-      pathToBicepFile: ${{ needs.setup_vars.outputs.PATH_TO_BICEP_FILE2 }}
+      pathToBicepFile: ${{ needs.setup_vars.outputs.PATH_TO_BICEP_FILE }}
 
   validate:
-    needs: [setup_vars]
+    needs: [test_vars]
     # needs: [lint]
     uses: ./.github/workflows/job-validate-bicep.yml
     with:
