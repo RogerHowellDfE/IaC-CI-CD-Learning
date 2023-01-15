@@ -42,28 +42,6 @@ jobs:
     needs: [setup_vars]
     runs-on: ubuntu-latest
     steps:
-      - name: Check variables are set - AZURE_RESOURCEGROUP_NAME
-        shell: bash
-        env: 
-          value: needs.setup_vars.outputs.AZURE_RESOURCEGROUP_NAME
-        run: |
-          if [ "${{ value }}" != '' ]; then
-            echo "value is set";
-          else
-            echo >&2 "value unavailable";
-            exit 1
-          fi
-      - name: Check variables are set - DEPLOYMENT_NAME
-        shell: bash
-        env: 
-          value: needs.setup_vars.outputs.DEPLOYMENT_NAME
-        run: |
-          if [ "${{ value }}" != '' ]; then
-            echo "value is set";
-          else
-            echo >&2 "value unavailable";
-            exit 1
-          fi
       - name: Check variables are set - PATH_TO_BICEP_FILE
         shell: bash
         env: 
