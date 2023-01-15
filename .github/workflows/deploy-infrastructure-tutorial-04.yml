@@ -46,7 +46,7 @@ jobs:
 
   ## Fail workflow if error in specifying variables above (i.e., if they're empty string)
   ## Note: Deliberately a separate job, to validate that variable content is available via job outputs
-  test_var_availability:
+  validate_var_availability:
     needs: [setup_vars]
     runs-on: ubuntu-latest
     strategy:
@@ -69,13 +69,13 @@ jobs:
 
           
   lint:
-    needs: [setup_vars, test_var_availability]
+    needs: [setup_vars, validate_var_availability]
     uses: ./.github/workflows/job-lint-bicep.yml
     with:
       pathToBicepFile: ${{ needs.setup_vars.outputs.PATH_TO_BICEP_FILE }}
 
   validate:
-    needs: [setup_vars, test_var_availability]
+    needs: [setup_vars, validate_var_availability]
     # needs: [lint]
     uses: ./.github/workflows/job-validate-bicep.yml
     with:
