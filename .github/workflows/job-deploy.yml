@@ -46,6 +46,9 @@ jobs:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}   ## Application ID for the application registration, _not_ the object ID
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}               ## Unique identifier for your Azure AD tenant (directory)
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}   ## The Azure subscription ID being interacted with / deployed to
+
+    - name: Do not be alarmed by stderr output by bicep - expected/normal quirk
+
     - uses: azure/arm-deploy@v1
       id: deploy
       with:
