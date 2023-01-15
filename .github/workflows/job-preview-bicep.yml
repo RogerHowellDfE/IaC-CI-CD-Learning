@@ -39,6 +39,7 @@ jobs:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     - name: Do not be alarmed by stderr output by bicep - expected/normal quirk
+      run: echo "Do not be alarmed by routine stderr output by bicep - this is an expected/normal quirk, where it writes normal/routine log information out to stderr"
 
     - uses: azure/arm-deploy@v1
       name: Run what-if
