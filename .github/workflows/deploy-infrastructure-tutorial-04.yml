@@ -38,31 +38,16 @@ jobs:
           echo ${{ steps.step1.outputs.DEPLOYMENT_NAME }}
           echo ${{ steps.step1.outputs.PATH_TO_BICEP_FILE }}
 
-  test_vars:
-    needs: [setup_vars]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check variables are set - PATH_TO_BICEP_FILE
-        shell: bash
-        env: 
-          value: needs.setup_vars.outputs.PATH_TO_BICEP_FILE
-        run: |
-          if [ "${{ value }}" != '' ]; then
-            echo "value is set";
-          else
-            echo >&2 "value unavailable";
-            exit 1
-          fi
 
 
   lint:
-    needs: [test_vars]
+    needs: [setup_vars]
     uses: ./.github/workflows/job-lint-bicep.yml
     with:
       pathToBicepFile: ${{ needs.setup_vars.outputs.PATH_TO_BICEP_FILE }}
 
   validate:
-    needs: [test_vars]
+    needs: [setup_vars]
     # needs: [lint]
     uses: ./.github/workflows/job-validate-bicep.yml
     with:
