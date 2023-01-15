@@ -70,7 +70,7 @@ jobs:
   deploy_nonprod:
     name: deploy to nonprod
     needs: [test_var_availability]
-    uses: ./.github/workflows/job-deployto-environment.yml
+    uses: ./.github/workflows/job-deploy-to-environment.yml
     with:
       pathToBicepFile: ${{ needs.setup_vars.outputs.PATH_TO_BICEP_FILE }}
       environmentNamePrefix: ${{ needs.setup_vars.outputs.ENVIRONMENT_NAME_PREFIX}}
@@ -84,7 +84,7 @@ jobs:
   deploy_prod:
     name: deploy to prod
     needs: [deploy_nonprod]
-    uses: ./.github/workflows/job-deployto-environment.yml
+    uses: ./.github/workflows/job-deploy-to-environment.yml
     with:
       pathToBicepFile: ${{ needs.setup_vars.outputs.PATH_TO_BICEP_FILE }}
       environmentNamePrefix: ${{ needs.setup_vars.outputs.ENVIRONMENT_NAME_PREFIX}}
