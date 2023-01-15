@@ -26,6 +26,7 @@ jobs:
     outputs:
       AZURE_RESOURCEGROUP_NAME: ${{ steps.step1.outputs.AZURE_RESOURCEGROUP_NAME }}
       DEPLOYMENT_NAME: ${{ steps.step1.outputs.DEPLOYMENT_NAME }}
+      ENVIRONMENT_NAME_PREFIX: ${{ steps.step1.outputs.ENVIRONMENT_NAME_PREFIX }}
       PATH_TO_BICEP_FILE: ${{ steps.step1.outputs.PATH_TO_BICEP_FILE }}
     steps:
       - run: echo ${{ env.PATH_TO_BICEP_FILE }}
