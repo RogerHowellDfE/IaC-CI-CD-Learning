@@ -23,7 +23,7 @@ jobs:
   lint:
     uses: ./.github/workflows/job-lint-bicep.yml
     with:
-      pathToBicepFile: ${{ env.PATH_TO_BICEP_FILE }}
+      pathToBicepFile: ./deploy/main-tutorial-04.bicep
 
   validate:
     runs-on: ubuntu-latest
