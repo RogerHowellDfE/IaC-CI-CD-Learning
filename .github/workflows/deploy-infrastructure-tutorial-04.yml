@@ -19,11 +19,22 @@ env:
 
 jobs:
 
-  # Lint the Bicep file.
+  ## Workaround to pass non-secret env vars to jobs
+  setup_vars: 
+    runs-on: ubuntu-latest
+    # Map a step output to a job output
+    outputs:
+      AZURE_RESOURCEGROUP_NAME: ${{ steps.step1.outputs.AZURE_RESOURCEGROUP_NAME }}
+    steps:
+      - id: step1
+        run: |
+          echo "AZURE_RESOURCEGROUP_NAME=${{ env.AZURE_RESOURCEGROUP_NAME }}" >> $GITHUB_OUTPUT
+
   lint:
+    needs: [setup_vars]
     uses: ./.github/workflows/job-lint-bicep.yml
     with:
-      pathToBicepFile: ${{ env.AZURE_RESOURCEGROUP_NAME }}
+      pathToBicepFile: ${{ needs.setup_vars.env.AZURE_RESOURCEGROUP_NAME }}
 
   validate:
     # needs: [lint]
