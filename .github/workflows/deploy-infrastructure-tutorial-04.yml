@@ -73,10 +73,15 @@ jobs:
     needs: [setup_vars, test_var_availability]
     uses: ./.github/workflows/job-deploy-to-environment.yml
     strategy:
+      ## Run once for each permutation of matrix options - i.e., once per environment
+      ## - Parallelism limit allows for sequential deployments
+      ## - Fail fast cancels remaining matrix options if any other option fails/errors
       matrix: 
         environmentType: 
         - nonprod
         - prod
+      max-parallel: 1
+      fail-fast: true
     with:
       pathToBicepFile: ${{ needs.setup_vars.outputs.PATH_TO_BICEP_FILE }}
       environmentNamePrefix: ${{ needs.setup_vars.outputs.ENVIRONMENT_NAME_PREFIX}}
