@@ -22,7 +22,10 @@ $adApplicationDisplayName = "bicep-ci-cd-learning-github-workflow$($tutorialSuff
 $adApplicationName = "bicep-ci-cd-learning-github-workflow$($tutorialSuffix)"
 
 ### Resource Group
+$environmentType = 'nonprod'
+# $environmentType = 'prod'
 $resourceGroupName = "Xyz$($tutorialSuffix)"
+$rgNameWithEnvSuffix = "$($resourceGroupName)-$($environmentType)"
 $resourceGroupLocation = 'uksouth'
 
 
@@ -33,14 +36,9 @@ Write-Host "tutorialSuffix              : $($tutorialSuffix)"
 Write-Host "adApplicationDisplayName    : $($adApplicationDisplayName)"
 Write-Host "adApplicationName           : $($adApplicationName)"
 Write-Host "resourceGroupName           : $($resourceGroupName)"
+Write-Host "rgNameWithEnvSuffix         : $($rgNameWithEnvSuffix)"
 Write-Host "resourceGroupLocation       : $($resourceGroupLocation)"
 
-
-## Create new resource group
-$resourceGroup = New-AzResourceGroup -Name $($resourceGroupName) -Location $($resourceGroupLocation)
-
-## Show the resource group
-Get-AzResourceGroup -Name $($resourceGroupName)
 
 
 ## Create new Azure Active Directory (AD) Application, only if it doesn't already exist
@@ -102,16 +100,6 @@ New-AzADAppFederatedCredential `
 ## For Tutorial 05, we introduced multiple environments
 ## ... each of which have their own scope/subject
 
-$environmentType = 'nonprod'
-$federatedCredentialName_environment = "$($adApplicationName)-github-environment-$($branchName)-$($environmentType)"
-New-AzADAppFederatedCredential `
-   -Name $federatedCredentialName_environment `
-   -ApplicationObjectId $application.Id `
-   -Issuer 'https://token.actions.githubusercontent.com' `
-   -Audience 'api://AzureADTokenExchange' `
-   -Subject "repo:$($githubOrganisationName)/$($githubRepositoryName):environment:$($branchName) - $($environmentType)"
-
-$environmentType = 'prod'
 $federatedCredentialName_environment = "$($adApplicationName)-github-environment-$($branchName)-$($environmentType)"
 New-AzADAppFederatedCredential `
    -Name $federatedCredentialName_environment `
@@ -128,6 +116,14 @@ New-AzADAppFederatedCredential `
 New-AzADServicePrincipal -AppId $application.AppId
 
 
+
+## Create new resource group
+$resourceGroup = New-AzResourceGroup -Name $($rgNameWithEnvSuffix) -Location $($resourceGroupLocation)
+
+## Show the resource group
+Get-AzResourceGroup -Name $($resourceGroupName)
+
+
 ## Assign workflow identity permissions to the (newly-created) resource group
 New-AzRoleAssignment `
    -ApplicationId $($application.AppId) `
@@ -136,5 +132,5 @@ New-AzRoleAssignment `
 
 
 ## Drop the resource group
-Remove-AzResourceGroup -Name $($resourceGroupName) -Force
-
+$rgNameWithEnvSuffix = "$($resourceGroupName)-nonprod"
+Remove-AzResourceGroup -Name $($rgNameWithEnvSuffix) -Force
