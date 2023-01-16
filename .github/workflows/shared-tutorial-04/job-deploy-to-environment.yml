@@ -71,7 +71,7 @@ jobs:
   lint:
     name: lint bicep file - ${{ inputs.pathToBicepFile }}
     needs: [validate_inputs_availability, validate_secrets_availability]
-    uses: ./.github/workflows/job-lint-bicep.yml
+    uses: ./.github/workflows/shared-tutorial-04/job-lint-bicep.yml
     with:
       pathToBicepFile: ${{ inputs.pathToBicepFile }}
 
@@ -79,7 +79,7 @@ jobs:
     name: validate bicep file for environment - ${{ inputs.environmentType }}
     needs: [validate_inputs_availability, validate_secrets_availability]
     # needs: [lint]
-    uses: ./.github/workflows/job-validate-bicep.yml
+    uses: ./.github/workflows/shared-tutorial-04/job-validate-bicep.yml
     with:
       pathToBicepFile: ${{ inputs.pathToBicepFile }}
       environmentType: ${{ inputs.environmentType }}
@@ -92,7 +92,7 @@ jobs:
   preview:
     name: preview (what-if) to ${{ inputs.environmentNamePrefix }} - ${{ inputs.environmentType }}
     needs: [lint, validate]
-    uses: ./.github/workflows/job-preview-bicep.yml
+    uses: ./.github/workflows/shared-tutorial-04/job-preview-bicep.yml
     with:
       pathToBicepFile: ${{ inputs.pathToBicepFile }}
       environmentType: ${{ inputs.environmentType }}
@@ -105,7 +105,7 @@ jobs:
   deploy:
     name: deploy to ${{ inputs.environmentNamePrefix }} - ${{ inputs.environmentType }}
     needs: [preview]
-    uses: ./.github/workflows/job-deploy.yml
+    uses: ./.github/workflows/shared-tutorial-04/job-deploy.yml
     with:
       pathToBicepFile: ${{ inputs.pathToBicepFile }}
       environmentNamePrefix: ${{ inputs.environmentNamePrefix }}
