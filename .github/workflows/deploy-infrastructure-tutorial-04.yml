@@ -71,7 +71,7 @@ jobs:
   deploy:
     name: deploy to ${{ matrix.environmentType }}
     needs: [setup_vars, test_var_availability]
-    uses: ./.github/workflows/shared-tutorial-04/job-deploy-to-environment.yml
+    uses: ./.github/workflows//job-deploy-to-environment.yml
     strategy:
       ## Run once for each permutation of matrix options - i.e., once per environment
       ## - Parallelism limit allows for sequential deployments
