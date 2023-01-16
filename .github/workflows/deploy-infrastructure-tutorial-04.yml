@@ -67,29 +67,21 @@ jobs:
             exit 1
           fi
 
-  deploy_nonprod:
-    name: deploy to nonprod
+
+  deploy:
+    name: deploy to ${{ matrix.environmentType }}
     needs: [setup_vars, test_var_availability]
     uses: ./.github/workflows/job-deploy-to-environment.yml
+    strategy:
+      matrix: 
+        environmentType: 
+        - nonprod
+        - prod
     with:
       pathToBicepFile: ${{ needs.setup_vars.outputs.PATH_TO_BICEP_FILE }}
       environmentNamePrefix: ${{ needs.setup_vars.outputs.ENVIRONMENT_NAME_PREFIX}}
-      environmentType: nonprod
-      resourceGroupName: ${{ needs.setup_vars.outputs.AZURE_RESOURCEGROUP_NAME}}
-    secrets:
-      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_TUTORIAL_04 }}
-      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-  deploy_prod:
-    name: deploy to prod
-    needs: [setup_vars, deploy_nonprod]
-    uses: ./.github/workflows/job-deploy-to-environment.yml
-    with:
-      pathToBicepFile: ${{ needs.setup_vars.outputs.PATH_TO_BICEP_FILE }}
-      environmentNamePrefix: ${{ needs.setup_vars.outputs.ENVIRONMENT_NAME_PREFIX}}
-      environmentType: prod
-      resourceGroupName: ${{ needs.setup_vars.outputs.AZURE_RESOURCEGROUP_NAME}}
+      environmentType: ${{ matrix.environmentType }}
+      resourceGroupName: ${{ needs.setup_vars.outputs.AZURE_RESOURCEGROUP_NAME}}-${{ matrix.environmentType }}
     secrets:
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_TUTORIAL_04 }}
       AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
