@@ -83,7 +83,7 @@ jobs:
     with:
       pathToBicepFile: ${{ inputs.pathToBicepFile }}
       environmentType: ${{ inputs.environmentType }}
-      resourceGroupName: ${{ inputs.environmentNamePrefix }}
+      resourceGroupName: ${{ inputs.resourceGroupName }}
     secrets:
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
@@ -96,7 +96,7 @@ jobs:
     with:
       pathToBicepFile: ${{ inputs.pathToBicepFile }}
       environmentType: ${{ inputs.environmentType }}
-      resourceGroupName: ${{ inputs.environmentNamePrefix }}
+      resourceGroupName: ${{ inputs.resourceGroupName }}
     secrets:
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
@@ -110,7 +110,7 @@ jobs:
       pathToBicepFile: ${{ inputs.pathToBicepFile }}
       environmentNamePrefix: ${{ inputs.environmentNamePrefix }}
       environmentType: ${{ inputs.environmentType }}
-      resourceGroupName: ${{ inputs.environmentNamePrefix }}
+      resourceGroupName: ${{ inputs.resourceGroupName }}
     secrets:
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
