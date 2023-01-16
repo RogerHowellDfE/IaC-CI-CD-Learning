@@ -22,7 +22,10 @@ $adApplicationDisplayName = "bicep-ci-cd-learning-github-workflow$($tutorialSuff
 $adApplicationName = "bicep-ci-cd-learning-github-workflow$($tutorialSuffix)"
 
 ### Resource Group
+$environmentType = 'nonprod'
+# $environmentType = 'prod'
 $resourceGroupName = "Xyz$($tutorialSuffix)"
+$rgNameWithEnvSuffix = "$($resourceGroupName)-$($environmentType)"
 $resourceGroupLocation = 'uksouth'
 
 
@@ -33,14 +36,9 @@ Write-Host "tutorialSuffix              : $($tutorialSuffix)"
 Write-Host "adApplicationDisplayName    : $($adApplicationDisplayName)"
 Write-Host "adApplicationName           : $($adApplicationName)"
 Write-Host "resourceGroupName           : $($resourceGroupName)"
+Write-Host "rgNameWithEnvSuffix         : $($rgNameWithEnvSuffix)"
 Write-Host "resourceGroupLocation       : $($resourceGroupLocation)"
 
-
-## Create new resource group
-$resourceGroup = New-AzResourceGroup -Name $($resourceGroupName) -Location $($resourceGroupLocation)
-
-## Show the resource group
-Get-AzResourceGroup -Name $($resourceGroupName)
 
 
 ## Create new Azure Active Directory (AD) Application, only if it doesn't already exist
@@ -74,51 +72,38 @@ Write-Host "AZURE_CLIENT_ID:       $((Get-AzADApplication -DisplayName $adApplic
 
 ## Create Azure AD Application Federated Credentials for the (newly-created) AD Application Registration to be accessed by GitHub
 ## See tutorial 02 for addiitonal detail about this (short version: we're telling Azure which GitHub credentials are permitted)
-## 
-## - Below is specifically for the `$(branchName)` branch of this specific repo (also possible to apply to environments, pull requests, tags)
-##
+
+### TUTORIAL-SPECIFIC BRANCH
 $federatedCredentialName_tutorialSpecificBranch = "$($adApplicationName)-github-branch-$($branchName)"
+$federatedCredentialSubject_tutorialSpecificBranch = "repo:$($githubOrganisationName)/$($githubRepositoryName):ref:refs/heads/$($branchName)"
 New-AzADAppFederatedCredential `
-   -Name $federatedCredentialName_tutorialSpecificBranch `
-   -ApplicationObjectId $application.Id `
-   -Issuer 'https://token.actions.githubusercontent.com' `
-   -Audience 'api://AzureADTokenExchange' `
-   -Subject "repo:$($githubOrganisationName)/$($githubRepositoryName):ref:refs/heads/$($branchName)"
+-Name $federatedCredentialName_tutorialSpecificBranch `
+-ApplicationObjectId $application.Id `
+-Issuer 'https://token.actions.githubusercontent.com' `
+-Audience 'api://AzureADTokenExchange' `
+-Subject $federatedCredentialSubject_tutorialSpecificBranch
 
-
+# ### MAIN BRANCH
 # ## Optionally also trigger for main branch
 # $federatedCredentialName_mainBranch = "$($adApplicationName)-github-branch-main"
+# $federatedCredentialSubject_mainBranch = "repo:$($githubOrganisationName)/$($githubRepositoryName):ref:refs/heads/main"
 # New-AzADAppFederatedCredential `
 #    -Name $federatedCredentialName_mainBranch `
 #    -ApplicationObjectId $application.Id `
 #    -Issuer 'https://token.actions.githubusercontent.com' `
 #    -Audience 'api://AzureADTokenExchange' `
-#    -Subject "repo:$($githubOrganisationName)/$($githubRepositoryName):ref:refs/heads/$($branchName)"
+#    -Subject $federatedCredentialSubject_mainBranch
 
-
-## For Tutorial 03, we introduce the use of environments
-## This means we ALSO need to grant permission when running in the context of an environment
-
-## For Tutorial 05, we introduced multiple environments
-## ... each of which have their own scope/subject
-
-$environmentType = 'nonprod'
+### ENVIRONMENT-SPECIFIC ENVIRONMENT 
+### - Note that the environment name is per environment configuration on GitHub settings
 $federatedCredentialName_environment = "$($adApplicationName)-github-environment-$($branchName)-$($environmentType)"
+$federatedCredentialSubject_environment = "repo:$($githubOrganisationName)/$($githubRepositoryName):environment:$($branchName) - $($environmentType)"
 New-AzADAppFederatedCredential `
    -Name $federatedCredentialName_environment `
    -ApplicationObjectId $application.Id `
    -Issuer 'https://token.actions.githubusercontent.com' `
    -Audience 'api://AzureADTokenExchange' `
-   -Subject "repo:$($githubOrganisationName)/$($githubRepositoryName):environment:$($branchName) - $($environmentType)"
-
-$environmentType = 'prod'
-$federatedCredentialName_environment = "$($adApplicationName)-github-environment-$($branchName)-$($environmentType)"
-New-AzADAppFederatedCredential `
-   -Name $federatedCredentialName_environment `
-   -ApplicationObjectId $application.Id `
-   -Issuer 'https://token.actions.githubusercontent.com' `
-   -Audience 'api://AzureADTokenExchange' `
-   -Subject "repo:$($githubOrganisationName)/$($githubRepositoryName):environment:$($branchName) - $($environmentType)"
+   -Subject $federatedCredentialSubject_environment
 
 ## See (newly-created) federated permissions here:
 ## https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Credentials/appId/<REDACTED-APP-ID>/isMSAApp~/false
@@ -126,6 +111,14 @@ New-AzADAppFederatedCredential `
 
 ## Create Service Principal to the application
 New-AzADServicePrincipal -AppId $application.AppId
+
+
+
+## Create new resource group
+$resourceGroup = New-AzResourceGroup -Name $($rgNameWithEnvSuffix) -Location $($resourceGroupLocation)
+
+## Show the resource group
+Get-AzResourceGroup -Name $($resourceGroupName)
 
 
 ## Assign workflow identity permissions to the (newly-created) resource group
@@ -136,5 +129,5 @@ New-AzRoleAssignment `
 
 
 ## Drop the resource group
-Remove-AzResourceGroup -Name $($resourceGroupName) -Force
-
+$rgNameWithEnvSuffix = "$($resourceGroupName)-nonprod"
+Remove-AzResourceGroup -Name $($rgNameWithEnvSuffix) -Force

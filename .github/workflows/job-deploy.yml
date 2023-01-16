@@ -46,6 +46,10 @@ jobs:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}   ## Application ID for the application registration, _not_ the object ID
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}               ## Unique identifier for your Azure AD tenant (directory)
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}   ## The Azure subscription ID being interacted with / deployed to
+
+    - name: Do not be alarmed by stderr output by bicep - expected/normal quirk
+      run: echo "Do not be alarmed by routine stderr output by bicep - this is an expected/normal quirk, where it writes normal/routine log information out to stderr"
+
     - uses: azure/arm-deploy@v1
       id: deploy
       with:
@@ -56,6 +60,7 @@ jobs:
         ## When using custom linter configuration, Bicep writes log data to stderr, which GHA interprets as an error
         ## Disabling, per https://learn.microsoft.com/en-gb/training/modules/test-bicep-code-using-github-actions/5-exercise-add-lint-validate-jobs-workflow
         failOnStdErr: false
+
   smoke-test:
     runs-on: ubuntu-latest
     needs: deploy
