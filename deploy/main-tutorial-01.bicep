@@ -43,7 +43,8 @@ var environmentConfigurationMap = {
     }
     appServicePlan: {
       sku: {
-        name: 'S1'
+        // name: 'S1'
+        name: 'F1' // Using F1 here, for pricing concerns of test/learning project
         capacity: 2
       }
     }
