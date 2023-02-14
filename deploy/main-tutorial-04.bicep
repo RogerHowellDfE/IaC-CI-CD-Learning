@@ -39,7 +39,8 @@ var environmentConfigurationMap = {
   }
   prod: {
     appServiceApp: {
-      alwaysOn: true
+      // alwaysOn: true
+      alwaysOn: false // Using F1 here (which does not support always on), for pricing concerns of test/learning project
     }
     appServicePlan: {
       sku: {
