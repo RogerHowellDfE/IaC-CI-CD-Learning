@@ -69,7 +69,7 @@ var environmentConfigurationMap = {
     }
     xyzStorageAccount: {
       sku: {
-        name: 'Standard_LRS'
+        name: 'Standard_ZRS'
       }
     }
   }
