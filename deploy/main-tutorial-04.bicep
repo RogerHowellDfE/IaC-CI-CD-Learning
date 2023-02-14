@@ -37,25 +37,44 @@ var environmentConfigurationMap = {
       }
     }
   }
+  //prod: {
+  //  appServiceApp: {
+  //    // alwaysOn: true
+  //    alwaysOn: false // Using F1 here (which does not support always on), for pricing concerns of test/learning project
+  //  }
+  //  appServicePlan: {
+  //    sku: {
+  //      // name: 'S1'
+  //      name: 'F1' // Using F1 here, for pricing concerns of test/learning project
+  //      capacity: 2
+  //    }
+  //  }
+  //  xyzStorageAccount: {
+  //    sku: {
+  //      name: 'Standard_ZRS'
+  //    }
+  //  }
+  //}
+  
+  // Copy of dev in "prod" (for test/learning project)
   prod: {
     appServiceApp: {
-      // alwaysOn: true
-      alwaysOn: false // Using F1 here (which does not support always on), for pricing concerns of test/learning project
+      alwaysOn: false
     }
     appServicePlan: {
       sku: {
-        // name: 'S1'
-        name: 'F1' // Using F1 here, for pricing concerns of test/learning project
-        capacity: 2
+        name: 'F1'
+        capacity: 1
       }
     }
     xyzStorageAccount: {
       sku: {
-        name: 'Standard_ZRS'
+        name: 'Standard_LRS'
       }
     }
   }
 }
+
 var xyzStorageAccountConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${xyzStorageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${xyzStorageAccount.listKeys().keys[0].value}'
 
 resource appServicePlan 'Microsoft.Web/serverFarms@2020-06-01' = {
