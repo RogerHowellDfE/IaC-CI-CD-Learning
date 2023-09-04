@@ -35,7 +35,7 @@ jobs:
       ## Outputs from `deploy` must be specified withis the bicep file
       appServiceAppHostName: ${{ steps.deploy.outputs.appServiceAppHostName }}
     steps:
-    - uses: actions/checkout@v3.3.0
+    - uses: actions/checkout@v4
     - uses: azure/login@v1
       with:
         ## Discussion: Arguable if these ID values are "secrets"(???)
@@ -65,7 +65,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: deploy
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Check app service hostname has been passed
       shell: bash
